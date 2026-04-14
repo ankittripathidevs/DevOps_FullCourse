@@ -1,0 +1,149 @@
+(1) pwd:- present/print working directory /home/ankit
+(2) ls:- list
+(3) ls -a:- list all hidden files
+(4) ls -l:- show the list in long format.
+(5) ls /home/userAnkit : check list of UserAnkit from anywhere
+
+ Change Directory/Folder
+(7) cd ankit/ :- change directory to ankit
+(6) cd.. :- move back to parent directory
+(8) cd ../.. :- move back multiple level of parent directory 
+
+ Make Directory/Folder
+(9) mkdir user1:- make directory (folder name user1)
+(10) mkdir .user2:- create hidden folder (folder name .user2)
+(11) mkdir user1 user2 user3:- create multiple folder/directory at a time.
+(12) mkdir ankit ANkit anKit:- create duplicate folder using case-sensitive.
+
+ Create multiple file/folder using case-sensitivity
+Eg:- Ankit.txt, ankit.txt, ANKIT.txt, aNkit.txt ...
+
+ Create Empty file
+(13) touch demo.txt:- create a empty file (demo.txt)
+(14) touch .notes.txt:- create empty hidden file (.notes.txt)
+(15) touch apple.txt ball.txt cat.txt:- create multiple file at single commnad
+
+
+
+ Move File/Folder
+(16) mv folderName/file Path:- move folder1 to path xyz
+(17) mv ankit/ .. :- move ankit to its parent directory (one step back)
+(18) mv note.txt  /home/userAnkit/:- move note.txt in userAnkit directory
+
+ Rename File/Folder
+(19) mv demo cloud:- rename demo to cloud
+
+ Copy File/Folder
+(20) cp fileName  pathName:- copy file
+(21) cp -r folderName pathName:- copy folder
+-r:- recursively
+
+ Remove File/Folder
+(22) rmdir folderName:- remove/delete folder (if folder/directory is empty)
+(23) rmdir -r folderName:- remove/delete folder
+(24) rm -r folderName:- remove/delete folder (-r for folder)
+(25) rm fileName:- remove/delete file
+
+ Check History
+(26) history:- All the commands are shown here you have used upto now.
+
+
+ Print
+(27) printf 'learning linux':- print in same line
+(28) printf 'learning linux\n':- print in next line
+(29) echo "hello"
+(30) echo hello
+
+
+
+
+✅ Correct Command
+To delete a folder with all its files and subfolders, use:
+rm -rf flask-app-ecs/
+🔎 What it means:
+rm → remove
+-r → recursive (delete folders inside)
+-f → force (no confirmation)
+
+✅ rm -v filename — What it does
+rm -v filename
+🔎 Meaning:
+rm → remove (delete) file
+-v → verbose mode (shows what is being deleted)
+Exmaple:- rm -v test.txt
+
+ Change permission using chmod calculator
+(19) chmod 734 (linux permission vary) tofileName/tofolderName:- permission change (using chmod calculator)
+(20) ps:- Process Status.
+(21) top:- resources user (abcde quit q)
+
+
+sudo apt install gnome-screenshot
+(22) gnome-screenshot:- take screenshots
+(23) gnome-screenshot -a (Take area screenshot)
+
+(24) sudo su:- change reqular user to superAdmin
+(25) vim :- It is a powerful text editor used in Linux/Unix systems, especially from the terminal.
+. Create and edit files
+. Write code
+. Edit config files
+. Use advanced shortcuts for fast editing
+
+. Installation:- apt install vim
+. Open file:- vim file.txt
+. To write something:- press i
+. To Exit :- press esc
+. Exit without saving written data:- collon(:q)
+. Exit saving all written data:- collon(:wq)
+
+
+
+
+✅ 1. Edit file using nano (Easiest for beginners)
+nano filename.txt
+
+Example:
+nano myscript.sh
+After editing:
+CTRL + O → Save
+ENTER → Confirm
+CTRL + X → Exit
+
+✅ 2. Edit file using vim (Advanced users)
+vim filename.txt
+
+Basic vim usage:
+Press i → Insert (start editing)
+Edit your text
+Press Esc
+Type :wq → Save & Quit
+Type :q! → Quit without saving
+
+
+absolute path:- cd /bin/folder
+relative path:- cd folder2
+
+sudo apt-get udate
+sudo apt upgrade
+sudo apt install gnome-screenshot
+
+✔️ Summary
+apt = Advanced Package Tool
+apt = package manager
+apt install = install a program
+apt update = refresh available packages list
+apt upgrade = update installed software
+
+
+✔️ Summary
+--> apt-get is the older package management tool used in Ubuntu and Debian systems.
+
+It is used to:
+Install software
+Update software
+Remove software
+Manage dependencies
+
+Before 2014 → Everyone used apt-get
+After 2014 → Ubuntu introduced apt (a newer, simpler version)
+

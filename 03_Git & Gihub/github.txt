@@ -1,0 +1,10 @@
+* Delete .git folder using PowerShell
+=> Remove-Item -Recurse -Force .git
+         or
+=> rmdir .git -Force -Recurse
+
+
+
+* Delete -git using Git bash
+=> rm -rf .git
+

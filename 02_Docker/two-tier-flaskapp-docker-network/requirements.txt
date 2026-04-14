@@ -1,0 +1,5 @@
+Flask==2.2.5
+Flask-MySQLdb==0.2.0
+mysqlclient==2.2.0
+requests==2.31.0
+Werkzeug==2.2.3

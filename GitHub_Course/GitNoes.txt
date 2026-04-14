@@ -1,0 +1,120 @@
+(1) Make folder:- mkdir folderName
+
+(2) Navigate to folder:- cd folderName
+
+(3) Navigate 2 folder first time:-  cd desktop/GitDemo
+
+(4) Go back one folder behind:- cd ..
+
+(5) make dummy file :- touch <file name>
+
+(6) Rename folder:- ren "old folder" "new folder"
+
+(7) List Directories:- ls
+
+
+(8) Configuration:-
+ git config --global user.name "Your Name"   # Set your username
+ git config --global user.email "your@email.com"  # Set your email
+ git config --list  # Check current Git configuration
+
+(9) Edit configuration:- 
+ git config --global -e
+ git config --global --edit
+
+
+(10) Stages :-
+  U - untracked
+  A - added or staged
+  C - Commited
+  M - modified
+
+
+(11) branch :-
+(a) Check branch list :- git branch
+(b) Create branch :- git branch feature1
+(c) Rename branch :- git branch -M 'footer'
+(d) Switch branch:- git checkout branchName
+(e) Switch branch:- git switch branchName
+(f) Create branch and switch that branch :- git switch -C feature/footer
+
+
+(12) Clone Remote Repo (remote access)
+(a) git clone <url>
+  Example:- git clone https://github.com/ankittripathe/JavaScript-Projects.gi
+(b) E waal folder vi bana dega:- git clone <url> <floder-name>
+(c) git remote -v
+
+
+(13) Command you need to know:-
+ (a) git status:- Check kr skte ho app kaunsa files Kis stage me hai.
+ (b) git status -s :- To know the status of unstaged and staged files.
+ (c) git log :- git log batata hai saare commit histories
+ (d) git log --oneline :- To know status of saved checkpoint
+ (e) git log --oneline --graph :- graph dikhanega
+
+
+
+(14) Going back to some previous saved point 
+ (a) One step back:- git reset --hard HEAD~1
+ (b) Two step back:- git reset --hard HEAD~2
+ 
+
+(15) Purne commit tak jo vi change huwa tha oha tak match krwa do
+(a) git checkout
+(b) git checkout -f :- dher sare files me changes huwa toh
+
+(16) Change ko commit kiye bina branch ko chnage krna taki jo change kiye hai hate na:- git stash 
+ Change ko wpas lane ke liye :- git stash apply
+
+
+(17) Notes
+Jab vi aap ek folder banate hai,
+git ko kuch nhi pata aapke folder ke baare me,
+Isliye aap waha pe git ko initalize karte ho,
+ab git ko permission mili hai to git aapke folder ko pehchaanta hai,
+to ab kauki git kaam kar skta hai is folder per ab hum yaha par untracked, tracked, modifed , staged and saved check point create kar skte hai,
+git kuch interesting cheeje kar skta hai jaise ki aap chaahe to kisi bhi moment par ye check kr skte ho aapki kitni files kis stage par hai.
+
+git reflog
+
+
+
+# Initalize
+git init
+
+# Stages:
+U - untracked
+A - added or staged
+C - commited
+
+# Command You need to Know:-
+git status -s :- To know current status of unstaged & staged files
+git log --oneline :- To know current status of saved points
+
+# To know current status of saved points
+git log --oneline
+
+# Going back to some previous saved point
+# one step back commited wala
+git reset --hard HEAD~1
+
+# two step vi ja sket hai its up to u
+git reset --hard HEAD~2
+
+# purne commit tak jo vi change huwa tha oha tak
+git checkpoint -f
+
+
+Commit hone se pahle Jitna chnages kiye ho hata doo
+git checkout <file-name>
+git checkout -f :- all files ke liye
+
+git rm <file-name> :- remove file form working directory or staging area
+
+git rm -f <file-name>
+
+********************
+# Remove Git tracking/history or  deletes the .git folder from the project directory 
+Remove-Item -Recurse -Force .git 
+

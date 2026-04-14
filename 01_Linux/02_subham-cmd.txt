@@ -1,0 +1,58 @@
+(1) date:- display date
+ . date +%D
+ . date +%y:%m:%d
+ . date +%d:%m:%y
+(2) date +%T:- display time
+(3) ls:- list
+(4) mkdir: make directory/folder
+(5) pwd :- present working directory 
+(6) rm filename :- remove file
+(7) rm -r foldername :- remove folder
+-r :- recursivily
+- :- flag
+
+(8) rmdir folderName :- remove directory/folder
+(9) cat:- display file content
+(10) cat > demo.txt :- create file 
+(→ press Ctrl + D to save)
+(11) echo:- echo is a simple command that prints text to the terminal.
+(12) echo:- echo 'hello dosto' > newfile.txt
+This creates a new file (or replaces it).
+(13) echo:- echo 'line message' >> myfile.txt (add more content to the file)
+(14) head demofile.txt:- show first 10 line
+(15) tail demofile.txt:- show last line
+(16) more demo.txt:- File ko upar se neeche tk read karne deta hai
+(17) less demo.txt:- File ko scroll kar sakte ho
+(18) cp source destination
+(19) wc file.txt:- word count
+     1 4 26 file.txt
+     1:- line
+     4:- words
+     26:- bits
+(20) soft link:-
+    . ln -s /home/ankit/userankit/linux/cloud.txt  softlink-fileHai
+    
+    . Soft link is the shortcut of actual(original path).
+    . If original file is deleted → soft link will(deleted)
+      break ho gaya (red in color)
+    . change in original file will only reflect in softLink file
+    
+ (21) hard link:- 
+     . ln /home/ankit/userankit/linux/cloud.txt hardlink-fileHai
+     
+    . Hard link is another name of the original file.
+    . Both files share same data on disk.
+    . If original file is deleted → hard link still works (data safe).
+    . Changes in original file/anyfile → automatically reflect in hard link.
+    . Hard link cannot be created for directories.
+    
+ (21) ls - ltr :- Breakdown
+  l → Long listing format
+  Shows detailed info: permissions, owner, size, date,  filename.
+  t → Sort by modification time
+  Newest files first (without r).
+  r → Reverse order
+  So it flips the sorting → Oldest files first.
+  
+  (22) echo 'hello | tee demo.txt :- create a file name demo.txt and with content hello inside it. And will print the content at display.
+

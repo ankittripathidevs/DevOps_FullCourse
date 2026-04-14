@@ -1,0 +1,15 @@
+How to install Docker in Linux
+Step 1: update
+sudo apt update
+
+Step 2: Install Docker
+sudo apt install docker.io
+
+Step 3: Start, Enable, Check Docker
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo systemctl status docker
+
+Step 4: Check Docker Installation
+docker --version
+sudo docker run hello-world

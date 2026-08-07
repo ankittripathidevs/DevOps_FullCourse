@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This is script for TWS
+# Day-01 of Learning shell scripting
 
 echo "Platform: YouTube"
 

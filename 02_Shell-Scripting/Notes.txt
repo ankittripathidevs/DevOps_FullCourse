@@ -18,6 +18,3 @@ echo "My first shell script is running!"
 Press CTRL + O
 Press ENTER
 Press CTRL + X to exit
-
-(4) 
-

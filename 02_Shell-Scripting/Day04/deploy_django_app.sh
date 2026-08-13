@@ -24,8 +24,6 @@ code_clone() {
 }
 
 
-
-
 # ------------------------------------------------------
 # (2) Function to install required dependencies
 # -----------------------------------------------------
@@ -70,7 +68,6 @@ echo " --------------------------------------- "
 if ! code_clone; then 
   echo "Error: Failed to clone the code....... "
 fi
-
 
 # (2) Install dependencies
 if ! install_requirements; then

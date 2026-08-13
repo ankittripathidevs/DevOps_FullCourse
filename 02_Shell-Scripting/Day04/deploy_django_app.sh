@@ -18,7 +18,7 @@ code_clone() {
         git pull
     else
         echo "Cloning application........"
-	git clone https://github.com/ankittripathidevs/django-notes-app.git
+       	git clone https://github.com/ankittripathidevs/django-notes-app.git
         cd django-notes-app
     fi
 }

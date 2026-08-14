@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 << task
 Deploy Django + MySQL using docker-compose and handle repeated deployments safely
 task

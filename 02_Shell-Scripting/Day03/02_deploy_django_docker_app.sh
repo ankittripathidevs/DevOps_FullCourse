@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 << task 
 Deploy Django + SQLLite using Docker and handle repeated deployments safely
 task

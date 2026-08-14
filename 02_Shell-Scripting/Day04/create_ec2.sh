@@ -1,4 +1,8 @@
 #!/bin/bash
+
+
+# Day-04: Install AWS CLI on Linux
+
 set -euo pipefail
 
 check_awscli() {

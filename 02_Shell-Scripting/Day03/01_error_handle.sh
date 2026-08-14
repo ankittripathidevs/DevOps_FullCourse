@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Day-03: Advance Scripting & Debugging Technique
+
 << notes
 $?              → Check previous command status
 if command      → Handle success/failure

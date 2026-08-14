@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This is Jetha ki Duniya
+# Day02: Basic Scripting skil
 
 << comment
 This is comment line

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Day02: Basic Scripting skil
+# Day-02: Intermediate shell-Scripting Technique
 
 << comment
 This is comment line

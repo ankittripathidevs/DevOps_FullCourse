@@ -1,48 +1,43 @@
 # Determine the operating system
-OS := $(shell uname)
+OS = $(shell uname)
 
 # Define Docker compose command
-DOCKER_COMPOSE := docker-compose
+DOCKER_COMPOSE = docker compose
 
-# Define Docker compose service name
-SERVICE_NAME := web
-
-# Build target
+# (1) Build
 build:
-ifeq ($(OS),Linux)
-	@echo "Building for Linux"
+	@echo " Running in $(OS)....."
+	@echo "Building Docker image..."
 	$(DOCKER_COMPOSE) build
-endif
-ifeq ($(OS),Darwin)
-	@echo "Building for macOS"
-	$(DOCKER_COMPOSE) build
-endif
-ifeq ($(OS),Windows_NT)
-	@echo "Building for Windows"
-	# Add Windows-specific build commands if you wish :P
-endif
 
-# Run target
+
+# (2) Run
 run:
-ifeq ($(OS),Linux)
-	@echo "Running for Linux"
+	echo "Starting Containers..."
 	$(DOCKER_COMPOSE) up -d
-endif
-ifeq ($(OS),Darwin)
-	@echo "Running for macOS"
-	$(DOCKER_COMPOSE) up -d
-endif
-ifeq ($(OS),Windows_NT)
-	@echo "Running for Windows"
-	# Add Windows-specific run commands if you wish :P
-endif
 
-# Stop target
+
+# (3) Stop
 stop:
+	@echo "Stopping Containers..."
 	$(DOCKER_COMPOSE) down
 
-# Clean target
+
+# (4) Check Logs
+logs:
+	$(DOCKER_COMPOSE) logs -f
+
+
+# (5) Check Status
+status:
+	$(DOCKER_COMPOSE) ps
+
+
+# (6)  Clean
 clean: stop
+	@echo "Removing unsed Docker resources..."
 	$(DOCKER_COMPOSE) rm -f
 	docker system prune -f
 
+
+.PHONY: build run stop clean logs  status

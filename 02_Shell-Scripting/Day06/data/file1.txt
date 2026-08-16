@@ -1,0 +1,2 @@
+Hell0, I'm file number 1
+Learning shell scripting

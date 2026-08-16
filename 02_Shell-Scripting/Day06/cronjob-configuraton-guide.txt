@@ -1,0 +1,20 @@
+# Automatic Backup Schedule
+- use chontab -e 
+
+# EXplore more 
+https://crontab.guru/ 
+
+# 1. Open crontab
+- crontab -e 
+
+# 2. Choose any editor: like  vim
+-  Add this line:-   0 23 * * * /home/ubuntu/DevOps_FullCourse/02_Shell-Scripting/Day06/01_backup_script.sh /home/ubuntu/DevOps_FullCourse/02_Shell-Scripting/Day06/data /home/ubuntu/DevOps_FullCourse/02_Shell-Scripting/Day06/backups
+
+# 3. Cron format:
+┌──────── minute (0)
+│  ┌────── hour (23)
+│  │  ┌──── day (every day)
+│  │  │ ┌── month (every month)
+│  │  │ │ ┌ day of week (every day)
+│  │  │ │ │
+0  23 * * *

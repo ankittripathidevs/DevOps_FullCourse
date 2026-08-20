@@ -1,0 +1,9 @@
+# Types of Docker Network 
+Docker Network 
+. host 
+. bridge (default)
+. user defined bridge (Custom)
+. none 
+. MACVLAN (docker swarm)
+. IPVLAN
+. Overlay 

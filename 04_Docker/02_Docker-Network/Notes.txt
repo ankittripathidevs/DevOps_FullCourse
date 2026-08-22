@@ -1,0 +1,15 @@
+# Types of Docker Network 
+Docker Network 
+. host 
+. bridge (default)
+. user defined bridge (Custom)
+. none 
+. MACVLAN (docker swarm)
+. IPVLAN
+. Overlay 
+
+
+# shows all listening TCP ports on your EC2
+sudo ss -l
+
+where: ss = see sockets → -l = listening → -t = TCP → -n = numbers → -p = process

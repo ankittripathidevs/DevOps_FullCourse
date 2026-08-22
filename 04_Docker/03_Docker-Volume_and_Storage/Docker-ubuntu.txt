@@ -273,16 +273,16 @@ Runs: java Main
 Because Java finishes.
 
 🔴 ENTRYPOINT                   Behavior                    Summary
-Command	                        What Runs	            Result
-docker run java-app	        java Main	            Prints → exits
-docker run java-app bash	java Main bash	            Java runs, not shell
-docker run -d -it java-app	java Main	            Background → exits
+Command	                        What Runs	                Result
+docker run java-app	          java Main	                Prints → exits
+docker run java-app bash	  java Main bash	        Java runs, not shell
+docker run -d -it java-app	  java Main	                Background → exits
 
 🔥 Core Difference Between CMD and ENTRYPOINT
         Feature	                                    CMD	            ENTRYPOINT
-Can override with docker run image bash?	  ✅ Yes	              ❌ No
-Arguments                                         ❌ Replaced	      ✅ Appended
-Flexible?	                                  Yes	             No (fixed executable)
+Can override with docker run image bash?	     ✅ Yes	              ❌ No
+Arguments                                        ❌ Replaced	       ✅ Appended
+Flexible?	                                      Yes	             No (fixed executable)
 
 🧠 Important Concept
 Your container exits quickly because:
@@ -373,24 +373,18 @@ where -d:- driver
   - Docker
   - Git (optional, for cloning the repository)
 
-✅ Setup
 
+✅ Setup
 (1) Clone this repository (if you haven't already)
 --> git clone https://github.com/ankittripathe/two-tier-flaskapp-docker-network.git
 
 
 (2) Navigate to the project directory
---> cd two-tier-flaskapp-docker-network
+--> cd two-tier-flaskapp
 
 (3) MySQL Container Setup
 --> This is used when you run the MySQL Docker container.
 
-docker run -d \
- --name mysql-docker \ (docker customName)
--e MYSQL_ROOT_PASSWORD=root \
- -e MYSQL_DATABASE=devops \
- -p 3306:3306 \
- mysql:8
 
 🔹 These variables are for MySQL image only.
 
@@ -417,7 +411,7 @@ docker run -d \
 ✅ To run this two-tier application using without docker-compose
 
 (1) First create a docker image from Dockerfile
---> docker build -t flaskapp .
+--> docker build -t flask-app .
 
 
 (2) Now, make sure that you have created a network using following command
@@ -528,4 +522,166 @@ You should see something like:
     DEY-3 Docker Volume 
  =======================
 🌼 Docker Volume 
+
+(1) List docker volumes 
+- docker volume ls
+
+(2) Create a docker volume 
+- docker volume create mysql-data
+
+(3) Inspect a docker volume
+- docker volume inspect mysql-data
+
+(4) Remove a docker volume
+- docker volume rm mysql-data
+
+(5) Remove unused volumes
+- docker volume prune
+
+**********************************************************************************************************************
+
+🌼 Complete Two-Tier Flask + MySQL Docker Setup
+
+(1) Create Network
+- docker network create two-tier
+
+(2) Create MySQL volume
+- docker volume create mysql-data
+
+(3) Create MySQL container
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v mysql-data:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means: -v mysql-data:/var/lib/mysql
+Docker volume → MySQL's data directory
+
+(4) Create Flask container
+
+docker run -d \
+  --name flask-container \
+  -p 5000:5000 \
+  --network two-tier \
+  -e MYSQL_HOST=mysql-container \
+  -e MYSQL_USER=root \
+  -e MYSQL_PASSWORD=root \
+  -e MYSQL_DB=devops \
+  flask-app
+
+
+        Your architecture should be
+            two-tier network
+                 │
+    ┌────────────┴────────────┐
+    │                         │
+Flask Container           MySQL Container
+    │                         │
+    │                    /var/lib/mysql
+    │                         │
+    │                      mysql-data
+    │                    Docker Volume
+    │                         │
+    └─────────── network ─────┘
+
+(5) Then: Eneter some data at UI part.
+Exaple:
+hello
+namaste
+
+(6) Delete mysql-conatiner, and run again using same volume
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v mysql-data:/var/lib/mysql \
+  mysql:latest
+
+
+=================================================================
+🌼 How to See Where Docker Volume Data Is Stored
+(i) List Docker Volumes
+- docker volume ls
+
+output: mysql-data 
+
+(ii) Inspect the Docker Volume
+- docker volume inspect mysql-data
+
+You will see information similar to:
+[
+    {
+        "CreatedAt": "...",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/mysql-data/_data",
+        "Name": "mysql-data"
+    }
+]
+
+- Mountpoint: /var/lib/docker/volumes/mysql-data/_data
+This is the actual location of the volume data on the Docker host
+
+(iii) Switch to Root User
+- sudo su
+
+(iv) Navigate to the Volume Directory
+- cd /var/lib/docker/volumes/mysql-data/_data
+
+(v) List the Stored Data
+- ls
+
+(vi) You will see MySQL's stored files and directories.
+- For example;
+  auto.cnf
+  binlog.000001
+  ibdata1
+  ib_logfile0
+  mysql
+  performance_schema
+  sys
+  devops
+
+# Key concept
+ Docker Volume Name
+       ↓
+   mysql-data
+       ↓
+ Docker Mountpoint
+       ↓
+  /var/lib/docker/volumes/mysql-data/_data
+       ↓
+ Persistent MySQL data
+
+========================================================================
+
+
+(7) Connect to MySQL Container
+(a) Enter the MySQL container
+- docker exec -it mysql-conatiner bash 
+
+(b) Then connect to MySQL
+- mysql -u root -p
+
+(c) Enter the password
+- root
+
+(8) Check the Database
+(a) Inside MySQL
+- SHOW DATABASES;
+You should see: devops
+
+(b) Select the database
+- USE devops;
+
+(c) Check the data:
+- SELECT * FROM messages; 
 

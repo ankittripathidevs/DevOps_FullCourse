@@ -1,3 +1,6 @@
+              DAY-1
+            =========
+
 🌸 Install Docker In Ubuntu
 --> sudo apt-get install docker.io
 --> sudo install docker.io
@@ -14,24 +17,36 @@ docker:- The service name—here it's the Docker Engine.
 *************************************************************************************************************
 🌸 Some Important Commands
      Commands                                 Meaning
-(1) docker version                       Show the Docker version information
-(2) docker info                          Display system-wide information
-(3) docker ps                            List containers
-(4) docker images                        List containers 
-(5) docker login                         Authenticate to a registry
-(6) docker logout                        Log out from a registry
-(7) docker build                         Build an image from a Dockerfile
-(8) docker run                           Create and run a new container from an image
-(9) docker exec                          Execute a command in a running container
-(10) docker pull                         Download an image from a registry
-(11) docker push                         Upload an Image to a registry
-(12) docker stop Container-Name/Id       Stop running docker Container
-(12) docker start Container-Name/Id      Start docker Container
-(13) docker rm Conatiner-Name/Id         Remove docker Conatiner
-(14) docker rmi Conatiner-Id/Repo        Remove docker Images
-(15) docker stop conatiner-Name          Stop & Remove docker Container
+(1) docker -v                            show docker version2
+(2) docker version                       show docker version in details
+(3) docker info                          display system-wide information
+
+(4) docker ps                            list all running containers
+(5) docker ps -a                         list running + stopped conatiners
+(6) docker images                        List all Images
+(7) docker images -a                     list all stagged & unstagged images
+
+(8) docker login                         Authenticate to a registry
+(9) docker logout                        Log out from a registry
+
+(10) docker build                        Build an image from a Dockerfile
+(11) docker run                          Create & run a new container from an image
+(12) docker exec                         Execute a command in a running container
+(13) docker pull                         Download an image from a registry
+(14) docker push                         Upload an Image to a registry
+
+(15) docker stop Container-Name/Id       Stop running docker-Container
+(16) docker start Container-Name/Id      Start docker Container
+(17) docker rm Conatiner-Name/Id         Remove docker Conatiner
+(18) docker rmi Conatiner-Id/Repo        Remove docker Images
+
+(19) docker stop conatiner-Name          Stop & Remove docker Container
      && docker rm conatiner-Name
-(16) docker restart container-Name       Restart Docker Conatiner
+
+(20) docker restart container-Name       Restart Docker Conatiner
+(21) docker rm -f conatiner-Name         delete running container
+(22) docker image prune                  remove unstagged images 
+
            
 
 **************************************************************************************************************
@@ -324,7 +339,11 @@ where
 --> docker attach flask-docker :- update realtime
 
 *********************************************************************************************************************
-🌸 Docker Networking
+*********************************************************************************************************************
+      DAY-2      
+ ==============
+
+🌸 Docker Network
       Driver	                            Use Case
   . bridge (default)                   Default, same host communication
   . user defined bridge (custom)       Custom 
@@ -339,8 +358,7 @@ where
 --> docker network ls
 
 🌸 Create network
---> docker network create 
---> docker network create -d bridge
+--> docker network create ankit_network -d bridge
 where -d:- driver
 
 🌸 Remove a Docker Network
@@ -411,11 +429,9 @@ docker run -d \
 # Check network list
  --> docker network ls
 
-# Remove network
- --> docker network rm network-Name
-
-# Shows complete details about Docker network.
+# Shows complete details about Docker network
  --> docker network inspect network_name
+
 
 (3) Attach both the containers in the same network, so that they can communicate with each other
 
@@ -465,6 +481,7 @@ Then it will ask:- Enter password: root
 
 (4) Show All Databases
 --> SHOW DATABASES;
+--> show databases;
 
 You should see something like:
 +--------------------+
@@ -480,10 +497,12 @@ You should see something like:
 
 (5) Select Your Database
 --> USE devops;
+--> use devops;
 --> This switches to your project database.
 
 (6) View All Messages (Check Table Data)
 --> SELECT * FROM messages;
+--> select * from messages;
 --> This shows all rows stored inside the messages table.
 
 (7) Restart Docker Container
@@ -503,4 +522,10 @@ You should see something like:
 
 (10) Here term volume comes in.
 - we will study in seperate project 
+
+*********************************************************************************************************************
+*********************************************************************************************************************
+    DEY-3 Docker Volume 
+ =======================
+🌼 Docker Volume 
 

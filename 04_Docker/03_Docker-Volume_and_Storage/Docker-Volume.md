@@ -62,7 +62,102 @@ docker volume prune
 
 ---
 
-# 🌼 2. Complete Two-Tier Flask + MySQL Docker Setup
+# 🌼 2. Named Volume vs Bind Mount
+
+Docker provides two common ways to persist container data:
+
+1. **Named Volume**
+2. **Bind Mount**
+
+---
+
+## (1) Named Volume
+
+A Named Volume is managed by Docker.
+
+Example:
+
+```bash
+-v mysql-data:/var/lib/mysql
+```
+
+Here:
+
+```text
+Docker Volume                MySQL Container
+     │                              │
+     │                              │
+mysql-data ───────────────→ /var/lib/mysql
+```
+
+Docker manages the storage location.
+
+Typically, the volume is stored at:
+
+```text
+/var/lib/docker/volumes/mysql-data/_data
+```
+
+---
+
+## (2) Bind Mount
+
+A Bind Mount uses a normal directory from the Docker host.
+
+First create the directory:
+
+```bash
+mkdir -p /home/ubuntu/volumes/mysql
+```
+
+Then mount it into the MySQL container:
+
+```bash
+-v /home/ubuntu/volumes/mysql:/var/lib/mysql
+```
+
+This means:
+
+```text
+Docker Host                         MySQL Container
+    │                                     │
+    │                                     │
+/home/ubuntu/volumes/mysql ──────→ /var/lib/mysql
+```
+
+The MySQL data is stored directly in:
+
+```text
+/home/ubuntu/volumes/mysql
+```
+
+### Key Difference
+
+```text
+Named Volume
+    ↓
+Docker manages the storage location
+
+Bind Mount
+    ↓
+You choose the storage location
+```
+
+---
+
+## Named Volume vs Bind Mount
+
+| Named Volume | Bind Mount |
+|---|---|
+| `mysql-data:/var/lib/mysql` | `/home/ubuntu/volumes/mysql:/var/lib/mysql` |
+| Docker manages the storage location | You choose the storage location |
+| Managed using `docker volume` commands | Managed as a normal host directory |
+| Good for Docker-managed persistent data | Useful when direct host-path access is needed |
+| Stored under Docker's volume storage | Stored at the host path you specify |
+
+---
+
+# 🌼 3. Complete Two-Tier Flask + MySQL Docker Setup
 
 Our application has two tiers:
 
@@ -74,7 +169,15 @@ Flask Application
 
 Both containers communicate through a Docker network.
 
-MySQL uses a Docker Volume for persistent data.
+MySQL uses persistent storage.
+
+You can use either:
+
+```text
+Named Volume
+     OR
+Bind Mount
+```
 
 ---
 
@@ -100,6 +203,8 @@ two-tier
 
 ## (2) Create MySQL Volume
 
+If using a **Named Volume**:
+
 ```bash
 docker volume create mysql-data
 ```
@@ -116,9 +221,15 @@ You should see:
 mysql-data
 ```
 
+> If you are using a **Bind Mount**, you do not need to create a Docker volume. Instead, create the host directory:
+>
+> ```bash
+> mkdir -p /home/ubuntu/volumes/mysql
+> ```
+
 ---
 
-## (3) Create MySQL Container
+## (3) Create MySQL Container Using Named Volume
 
 ```bash
 docker run -d \
@@ -132,13 +243,14 @@ docker run -d \
 ```
 
 ### Explanation
-(i) Sets the MySQL container name.
+
+### (i) Set the MySQL container name
 
 ```text
 --name mysql-container
 ```
 
-(ii) Maps:
+### (ii) Map the MySQL port
 
 ```text
 -p 3306:3306
@@ -148,36 +260,37 @@ docker run -d \
 Host Port 3306 → Container Port 3306
 ```
 
-(iii) Connects the MySQL container to the `two-tier` Docker network.
+### (iii) Connect the MySQL container to the network
 
 ```text
 --network two-tier
 ```
 
-(iv) Sets the MySQL root password.
+### (iv) Set the MySQL root password
 
 ```text
 -e MYSQL_ROOT_PASSWORD=root
 ```
 
-(v) Creates a database named:
+### (v) Create a database
 
 ```text
 -e MYSQL_DATABASE=devops
 ```
 
+This creates:
+
 ```text
 devops
 ```
 
-(vi) Mounts the Docker volume to MySQL's data directory.
+### (vi) Mount the Named Volume
 
 ```text
 -v mysql-data:/var/lib/mysql
 ```
 
-
-### Important
+This means:
 
 ```text
 Docker Volume                MySQL Container
@@ -195,8 +308,53 @@ Volume    = Persistent MySQL Data
 
 ---
 
+# 🌼 4. Create MySQL Container Using Bind Mount
 
-# 🌼 3. Create Flask Container
+Instead of a Named Volume, you can use a directory on the host.
+
+### (i) Create the Host Directory
+
+```bash
+mkdir -p /home/ubuntu/volumes/mysql
+```
+
+### (ii) Run MySQL
+
+```bash
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+```
+
+The important part is:
+
+```text
+-v /home/ubuntu/volumes/mysql:/var/lib/mysql
+```
+
+This means:
+
+```text
+Docker Host                         MySQL Container
+    │                                     │
+    │                                     │
+/home/ubuntu/volumes/mysql ──────→ /var/lib/mysql
+```
+
+MySQL data is stored directly on the host at:
+
+```text
+/home/ubuntu/volumes/mysql
+```
+
+---
+
+# 🌼 5. Create Flask Container
 
 Run the Flask container:
 
@@ -245,7 +403,9 @@ mysql-container
 
 ---
 
-# 🌼 4. Two-Tier Architecture
+# 🌼 6. Two-Tier Architecture
+
+## Using Named Volume
 
 ```text
                          two-tier network
@@ -270,6 +430,28 @@ mysql-container
                                         └────────────────┘
 ```
 
+## Using Bind Mount
+
+```text
+                         two-tier network
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+                ▼                               ▼
+       ┌─────────────────┐             ┌─────────────────┐
+       │ Flask Container │             │ MySQL Container │
+       │                 │             │                 │
+       │ Flask App       │────────────→│ MySQL           │
+       │ Port: 5000      │             │ Port: 3306      │
+       └─────────────────┘             └────────┬────────┘
+                                                │
+                                                │ /var/lib/mysql
+                                                │
+                                                ▼
+                                  /home/ubuntu/volumes/mysql
+                                      Docker Bind Mount
+```
+
 ### Data Flow
 
 ```text
@@ -286,12 +468,18 @@ MySQL Container
  │
  │ Stores Data
  ▼
-mysql-data Docker Volume
+Persistent Storage
+ │
+ ├── Named Volume
+ │     mysql-data
+ │
+ └── Bind Mount
+       /home/ubuntu/volumes/mysql
 ```
 
 ---
 
-# 🌼 5. Enter Data from the UI
+# 🌼 7. Enter Data from the UI
 
 Open the Flask application in your browser:
 
@@ -312,7 +500,7 @@ The data should be stored in the MySQL database.
 
 ---
 
-# 🌼 6. Connect to MySQL Container
+# 🌼 8. Connect to MySQL Container
 
 ## (a) Enter the MySQL Container
 
@@ -334,7 +522,7 @@ root
 
 ---
 
-# 🌼 7. Check the Database
+# 🌼 9. Check the Database
 
 ## (a) Show Databases
 
@@ -399,7 +587,7 @@ exit
 
 ---
 
-# 🌼 8. Test Docker Volume Persistence
+# 🌼 10. Test Persistent Storage
 
 This is the most important test.
 
@@ -407,8 +595,8 @@ We will:
 
 1. Add data
 2. Delete the MySQL container
-3. Keep the Docker volume
-4. Create MySQL again using the same volume
+3. Keep the persistent storage
+4. Create MySQL again using the same storage
 5. Check whether the old data still exists
 
 ---
@@ -470,7 +658,9 @@ The MySQL container should no longer be running.
 
 ---
 
-## Step 3: Check the Volume
+## Step 3: Check the Persistent Storage
+
+### If using Named Volume
 
 ```bash
 docker volume ls
@@ -482,15 +672,13 @@ You should still see:
 mysql-data
 ```
 
-### Important
-
 We deleted:
 
 ```text
 mysql-container
 ```
 
-But we did **NOT** delete:
+but we did **NOT** delete:
 
 ```text
 mysql-data
@@ -498,9 +686,21 @@ mysql-data
 
 Therefore, the data should still exist.
 
+### If using Bind Mount
+
+Check the host directory:
+
+```bash
+ls -la /home/ubuntu/volumes/mysql
+```
+
+The MySQL data should still be present because the directory belongs to the host, not the container.
+
 ---
 
-## Step 4: Create MySQL Again Using the Same Volume
+## Step 4: Create MySQL Again Using the Same Storage
+
+### Using Named Volume
 
 ```bash
 docker run -d \
@@ -513,13 +713,18 @@ docker run -d \
   mysql:latest
 ```
 
-The important part is:
+### Using Bind Mount
 
-```text
--v mysql-data:/var/lib/mysql
+```bash
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
 ```
-
-We are attaching the **same volume** to the new MySQL container.
 
 ---
 
@@ -563,7 +768,7 @@ The data that was entered before deleting the container should still be there.
 Old MySQL Container
         │
         ▼
-    mysql-data
+Persistent Storage
         │
         ▼
 New MySQL Container
@@ -574,15 +779,13 @@ Previous Data Still Exists
 
 ### Conclusion
 
-> **Docker Volume provides persistent storage independently of the container lifecycle.**
+> **Named Volumes and Bind Mounts provide persistent storage independently of the container lifecycle.**
 
 ---
 
-# 🌼 9. How to See Where Docker Volume Data Is Stored
+# 🌼 11. How to See Where Named Volume Data Is Stored
 
 Docker volumes are stored on the Docker host machine.
-
----
 
 ## (a) List Docker Volumes
 
@@ -674,7 +877,51 @@ The exact files and directories may vary depending on the MySQL version and conf
 
 ---
 
-# 🌼 10. Docker Volume Storage Flow
+# 🌼 12. How to See Bind Mount Data
+
+For a Bind Mount, you already know the host storage location because you created it.
+
+```bash
+ls -la /home/ubuntu/volumes/mysql
+```
+
+You can also inspect the container:
+
+```bash
+docker inspect mysql-container
+```
+
+Look for the `Mounts` section.
+
+You should see:
+
+```text
+Source:
+/home/ubuntu/volumes/mysql
+
+Destination:
+/var/lib/mysql
+```
+
+This confirms that:
+
+```text
+/home/ubuntu/volumes/mysql
+```
+
+on the host is mounted to:
+
+```text
+/var/lib/mysql
+```
+
+inside the MySQL container.
+
+---
+
+# 🌼 13. Storage Flow
+
+## Named Volume
 
 ```text
 Docker Volume Name
@@ -688,9 +935,23 @@ Docker Mountpoint
 Persistent MySQL Data
 ```
 
+## Bind Mount
+
+```text
+Host Directory
+        ↓
+/home/ubuntu/volumes/mysql
+        ↓
+Bind Mount
+        ↓
+/var/lib/mysql
+        ↓
+MySQL Container
+```
+
 ---
 
-# 🌼 11. Important Docker Commands
+# 🌼 14. Important Docker Commands
 
 ## Container Commands
 
@@ -714,7 +975,7 @@ docker exec -it mysql-container bash
 
 ---
 
-# 🌼 12. Docker Network Commands
+# 🌼 15. Docker Network Commands
 
 ### Create Network
 
@@ -742,7 +1003,7 @@ docker network rm two-tier
 
 ---
 
-# 🌼 13. Docker Volume Commands
+# 🌼 16. Docker Volume Commands
 
 ### Create Volume
 
@@ -778,7 +1039,103 @@ docker volume prune
 
 ---
 
-# 🌼 Final Architecture
+# ⚠️ 17. Important Warning
+
+Do **not** manually modify or delete MySQL files while MySQL is running.
+
+For a Named Volume:
+
+```text
+/var/lib/docker/volumes/mysql-data/_data
+```
+
+For a Bind Mount:
+
+```text
+/home/ubuntu/volumes/mysql
+```
+
+These files are managed by MySQL.
+
+Manually modifying or deleting them can corrupt the database.
+
+Use MySQL commands instead:
+
+```bash
+docker exec -it mysql-container mysql -u root -p
+```
+
+---
+
+# 🧠 18. Key Concepts
+
+## Container
+
+```text
+Container = Application Environment
+```
+
+A container is replaceable.
+
+```bash
+docker rm -f mysql-container
+```
+
+deletes the container.
+
+---
+
+## Named Volume
+
+```text
+Named Volume = Docker-managed Persistent Storage
+```
+
+Example:
+
+```bash
+-v mysql-data:/var/lib/mysql
+```
+
+---
+
+## Bind Mount
+
+```text
+Bind Mount = Host-managed Persistent Storage
+```
+
+Example:
+
+```bash
+-v /home/ubuntu/volumes/mysql:/var/lib/mysql
+```
+
+---
+
+# ⭐ 19. Most Important Concept
+
+```text
+Container Lifecycle ≠ Data Lifecycle
+```
+
+```text
+        Container
+            │
+            │ uses
+            ▼
+   Persistent Storage
+            │
+      ┌─────┴─────┐
+      │           │
+ Named Volume  Bind Mount
+```
+
+The container can be deleted and recreated while the persistent data remains.
+
+---
+
+# 🌼 20. Final Architecture
 
 ```text
                          Internet
@@ -786,7 +1143,7 @@ docker volume prune
                             │ :5000
                             ▼
                   ┌───────────────────┐
-                  │  Flask Container   │
+                  │  Flask Container  │
                   │                   │
                   │    Flask App      │
                   └─────────┬─────────┘
@@ -796,47 +1153,60 @@ docker volume prune
                             │
                             ▼
                   ┌───────────────────┐
-                  │ MySQL Container   │
+                  │  MySQL Container  │
                   │                   │
-                  │ MySQL :3306       │
+                  │   MySQL :3306     │
                   └─────────┬─────────┘
                             │
                             │ /var/lib/mysql
                             ▼
-                  ┌───────────────────┐
-                  │    mysql-data     │
-                  │   Docker Volume   │
-                  └───────────────────┘
+                  ┌───────────────────────┐
+                  │   Persistent Storage  │
+                  │                       │
+                  │ Named Volume OR       │
+                  │ Bind Mount             │
+                  └───────────────────────┘
 ```
 
-## Final Summary
+# 🌟 Final Summary
 
 ```text
-Network
-   ↓
-two-tier
-   ↓
+Docker Network
+      ↓
+  two-tier
+      ↓
 Connects Flask + MySQL
 
-Volume
-   ↓
-mysql-data
-   ↓
-Stores persistent MySQL data
-
 Flask
-   ↓
-Connects to MySQL using
+      ↓
 MYSQL_HOST=mysql-container
+      ↓
+MySQL
 
 MySQL
-   ↓
-Stores data in
+      ↓
 /var/lib/mysql
-
-Docker Volume
-   ↓
-/var/lib/docker/volumes/mysql-data/_data
-   ↓
+      ↓
 Persistent Storage
+
+Named Volume:
+mysql-data:/var/lib/mysql
+
+OR
+
+Bind Mount:
+/home/ubuntu/volumes/mysql:/var/lib/mysql
+```
+
+### Remember
+
+```text
+Named Volume
+→ Docker manages the storage location
+
+Bind Mount
+→ You choose/manage the host storage location
+
+Both
+→ Can persist data beyond the container lifecycle
 ```

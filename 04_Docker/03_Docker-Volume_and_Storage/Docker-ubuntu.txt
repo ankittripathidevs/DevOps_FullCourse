@@ -519,14 +519,16 @@ You should see something like:
 
 *********************************************************************************************************************
 *********************************************************************************************************************
-    DEY-3 Docker Volume 
- =======================
-🌼 Docker Volume 
 
-(1) List docker volumes 
+DEY-3 Docker Volume
+===================
+
+🌼 Docker Volume
+
+(1) List docker volumes
 - docker volume ls
 
-(2) Create a docker volume 
+(2) Create a docker volume
 - docker volume create mysql-data
 
 (3) Inspect a docker volume
@@ -538,17 +540,57 @@ You should see something like:
 (5) Remove unused volumes
 - docker volume prune
 
-**********************************************************************************************************************
 
+***********************************************************************************************
+🌼 Named Volume:- Docker manages the storage location
+Example:
+  -v mysql-data:/var/lib/mysql
+
+- mysql-data = Docker volume name
+- /var/lib/mysql = MySQL's data directory
+
+
+************************************************************************************************
+🌼 Bind Mount:- We create a folder on the host machine and use that folder for storing data
+
+(1) Create folder
+- mkdir -p /home/ubuntu/volumes/mysql
+
+(2) Run MySQL using Bind Mount
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means: -v /home/ubuntu/volumes/mysql:/var/lib/mysql
+Host folder → MySQL's data directory
+
+/home/ubuntu/volumes/mysql = Host folder
+/var/lib/mysql = MySQL container data directory
+
+
+****************************************************************************************************
 🌼 Complete Two-Tier Flask + MySQL Docker Setup
 
 (1) Create Network
 - docker network create two-tier
 
 (2) Create MySQL volume
+For Named Volume:
 - docker volume create mysql-data
 
+For Bind Mount:
+- mkdir -p /home/ubuntu/volumes/mysql
+
+
 (3) Create MySQL container
+Using Named Volume:
 
 docker run -d \
   --name mysql-container \
@@ -562,6 +604,25 @@ docker run -d \
 Note:
 This means: -v mysql-data:/var/lib/mysql
 Docker volume → MySQL's data directory
+
+
+Using Bind Mount:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means:
+-v /home/ubuntu/volumes/mysql:/var/lib/mysql
+
+Host folder → MySQL's data directory
+
 
 (4) Create Flask container
 
@@ -577,6 +638,7 @@ docker run -d \
 
 
         Your architecture should be
+
             two-tier network
                  │
     ┌────────────┴────────────┐
@@ -585,17 +647,25 @@ Flask Container           MySQL Container
     │                         │
     │                    /var/lib/mysql
     │                         │
-    │                      mysql-data
-    │                    Docker Volume
-    │                         │
-    └─────────── network ─────┘
+    │              ┌──────────┴──────────┐
+    │              │                     │
+    │        Named Volume           Bind Mount
+    │              │                     │
+    │        mysql-data       /home/ubuntu/volumes/mysql
+    │              │                     │
+    └──────────────┴──── network ────────┘
 
-(5) Then: Eneter some data at UI part.
-Exaple:
+
+(5) Then: Enter some data at UI part.
+
+Example:
 hello
 namaste
 
-(6) Delete mysql-conatiner, and run again using same volume
+
+(6) Delete mysql-container, and run again using same storage
+
+For Named Volume:
 
 docker run -d \
   --name mysql-container \
@@ -607,17 +677,34 @@ docker run -d \
   mysql:latest
 
 
+For Bind Mount:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+
 =================================================================
+
 🌼 How to See Where Docker Volume Data Is Stored
+
 (i) List Docker Volumes
 - docker volume ls
 
-output: mysql-data 
+output:
+mysql-data
+
 
 (ii) Inspect the Docker Volume
 - docker volume inspect mysql-data
 
 You will see information similar to:
+
 [
     {
         "CreatedAt": "...",
@@ -628,19 +715,25 @@ You will see information similar to:
 ]
 
 - Mountpoint: /var/lib/docker/volumes/mysql-data/_data
+
 This is the actual location of the volume data on the Docker host
+
 
 (iii) Switch to Root User
 - sudo su
 
+
 (iv) Navigate to the Volume Directory
 - cd /var/lib/docker/volumes/mysql-data/_data
+
 
 (v) List the Stored Data
 - ls
 
+
 (vi) You will see MySQL's stored files and directories.
-- For example;
+
+- For example:
   auto.cnf
   binlog.000001
   ibdata1
@@ -650,7 +743,9 @@ This is the actual location of the volume data on the Docker host
   sys
   devops
 
+
 # Key concept
+
  Docker Volume Name
        ↓
    mysql-data
@@ -661,12 +756,43 @@ This is the actual location of the volume data on the Docker host
        ↓
  Persistent MySQL data
 
+
+=================================================================
+
+🌼 How to See Bind Mount Data
+
+(i) Navigate to the Host Folder
+
+- cd /home/ubuntu/volumes/mysql
+
+
+(ii) List the Stored Data
+
+- ls
+
+You will see MySQL's stored files and directories.
+
+
+# Key concept
+
+ Host Folder
+       ↓
+ /home/ubuntu/volumes/mysql
+       ↓
+ Bind Mount
+       ↓
+ /var/lib/mysql
+       ↓
+ Persistent MySQL data
+
+
 ========================================================================
 
 
 (7) Connect to MySQL Container
+
 (a) Enter the MySQL container
-- docker exec -it mysql-conatiner bash 
+- docker exec -it mysql-container bash
 
 (b) Then connect to MySQL
 - mysql -u root -p
@@ -674,14 +800,20 @@ This is the actual location of the volume data on the Docker host
 (c) Enter the password
 - root
 
+
 (8) Check the Database
+
 (a) Inside MySQL
 - SHOW DATABASES;
-You should see: devops
+
+You should see:
+devops
+
 
 (b) Select the database
 - USE devops;
 
+
 (c) Check the data:
-- SELECT * FROM messages; 
+- SELECT * FROM messages;
 

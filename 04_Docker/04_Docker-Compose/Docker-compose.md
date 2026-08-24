@@ -1,23 +1,18 @@
-==============================================================================================
-                    DOCKER COMPOSE
-                         DAY-3
-==============================================================================================
-
-🌸 WHAT IS DOCKER COMPOSE?
+## 🌸 WHAT IS DOCKER COMPOSE?
 -->  Docker Compose = Manage multiple containers using one file.
 
-# Instead of running multiple `docker run` commands, we define the configuration in one file.
+#### Instead of running multiple `docker run` commands, we define the configuration in one file.
 -->  docker-compose.yml or
 -->  docker-compose.yaml
 
-# Then start everything with
+#### Then start everything with
 -->  docker compose up
 
+=============================================================================================
 
-===============================================================
-🌸 BASIC DOCKER COMPOSE FILE
-===============================================================
-# Example
+### 🌸 BASIC DOCKER COMPOSE FILE
+
+#### Example
 
    services:
 
@@ -28,9 +23,10 @@
         build: .
 
 
-===============================================================
-🌸 IMPORTANT OPTIONS
-===============================================================
+=============================================================================================
+
+### 🌸 IMPORTANT OPTION
+
 (1) services
 -->  Defines the containers/services
 
@@ -89,9 +85,10 @@
      restart: always
 
 
-===============================================================
-🌸 FLASK + MYSQL DOCKER COMPOSE
-===============================================================
+=============================================================================================
+
+### 🌸 FLASK + MYSQL DOCKER COMPOSE
+
 docker-compose.yml
 
     services:
@@ -162,12 +159,11 @@ docker-compose.yml
       mysql-data:
 
 
-===============================================================
-🌸 IMPORTANT: MYSQL_HOST
-===============================================================
-Here:
+================================================================================================
 
-# MYSQL_HOST: mysql
+### 🌸 IMPORTANT: MYSQL_HOST
+
+##### MYSQL_HOST: mysql
 -->  `mysql` is the MySQL service name, not mysql-container name.
 
      services:
@@ -176,9 +172,9 @@ Here:
           flask-app:
 
 
-===============================================================
-🌸 IMPORTANT DOCKER COMPOSE COMMANDS
-===============================================================
+==========================================================================================
+
+### 🌸 IMPORTANT DOCKER COMPOSE COMMANDS
 (1) Start containers:
 -  docker compose up
 
@@ -211,22 +207,24 @@ Here:
 -  docker compose exec mysql-container bash
 
 
-===============================================================
-🌸 CHECK MYSQL
-===============================================================
-# Enter MySQL:
+===========================================================================================
+
+### 🌸 CHECK MYSQL
+
+#### Enter MySQL:
 -  docker compose exec mysql-container mysql -u root -p
 
-# Then Enter
+#### Then Enter
 -  SHOW DATABASES;
 -  USE devops;
 -  SHOW TABLES;
 -  SELECT * FROM messages;
 
 
-===============================================================
-🌸 COMMON CHECKS
-===============================================================
+=============================================================================================
+
+### 🌸 COMMON CHECKS
+
 (1) Check containers:
 -  docker compose ps
 
@@ -246,33 +244,34 @@ Here:
 -  sudo ss -ltnp
 
 
-===============================================================
-🌸 IMPORTANT CONCEPT
-===============================================================
-# Without Compose:
-   docker network create
-   docker volume create
-   docker run mysql
-   docker run flask
+===========================================================================================
 
-# With Compose:
-   docker compose up -d
+### 🌸 IMPORTANT CONCEPT
 
-# Everything is defined inside:
-   docker-compose.yml
+#### Without Compose:
+     docker network create
+     docker volume create
+     docker run mysql
+     docker run flask
 
-# Key concept:
+#### With Compose:
+     docker compose up -d
 
-    Flask
+#### Everything is defined inside:
+     docker-compose.yml
+
+#### Key concept:
+
+     Flask
       |
       | MYSQL_HOST=mysql
       v
-    MySQL
+     MySQL
 
 
-===============================================================
-🌸 DOCKER CLEANUP COMMANDS
-===============================================================
+=========================================================================================
+
+### 🌸 DOCKER CLEANUP COMMANDS
 (1) Remove unused Docker resources:
 -  docker system prune
 

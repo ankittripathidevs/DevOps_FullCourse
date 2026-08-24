@@ -16,37 +16,40 @@ docker:- The service name—here it's the Docker Engine.
 
 *************************************************************************************************************
 🌸 Some Important Commands
-     Commands                                 Meaning
-(1) docker -v                            show docker version2
-(2) docker version                       show docker version in details
-(3) docker info                          display system-wide information
+     Commands                                  Meaning
+(1) docker -v                              show docker version2
+(2) docker version                         show docker version in details
+(3) docker info                            display system-wide information
 
-(4) docker ps                            list all running containers
-(5) docker ps -a                         list running + stopped conatiners
-(6) docker images                        List all Images
-(7) docker images -a                     list all stagged & unstagged images
+(4) docker ps                              list all running containers
+(5) docker ps -a                           list running + stopped conatiners
+(6) docker images                          List all Images
+(7) docker images -a                       list all stagged & unstagged images
 
-(8) docker login                         Authenticate to a registry
-(9) docker logout                        Log out from a registry
+(8) docker login                           Authenticate to a registry
+(9) docker logout                          Log out from a registry
 
-(10) docker build                        Build an image from a Dockerfile
-(11) docker run                          Create & run a new container from an image
-(12) docker exec                         Execute a command in a running container
-(13) docker pull                         Download an image from a registry
-(14) docker push                         Upload an Image to a registry
+(10) docker build                          Build an image from a Dockerfile
+(11) docker run                            Create & run a new container from an image
+(12) docker exec                           Execute a command in a running container
+(13) docker pull                           Download an image from a registry
+(14) docker push                           Upload an Image to a registry
 
-(15) docker stop Container-Name/Id       Stop running docker-Container
-(16) docker start Container-Name/Id      Start docker Container
-(17) docker rm Conatiner-Name/Id         Remove docker Conatiner
-(18) docker rmi Conatiner-Id/Repo        Remove docker Images
+(15) docker stop Container-Name/Id         Stop running docker-Container
+(16) docker start Container-Name/Id        Start docker Container
+(17) docker rm Conatiner-Name/Id           Remove docker Conatiner
+(18) docker rmi Conatiner-Id/Repo          Remove docker Images
 
-(19) docker stop conatiner-Name          Stop & Remove docker Container
+(19) docker stop conatiner-Name            Stop & Remove docker Container
      && docker rm conatiner-Name
 
-(20) docker restart container-Name       Restart Docker Conatiner
-(21) docker rm -f conatiner-Name         delete running container
-(22) docker image prune                  remove unstagged images 
+(20) docker restart container-Name         Restart Docker Conatiner
+(21) docker rm -f conatiner-Name           delete running container
+(22) docker image prune                    remove unstagged images 
 
+🌸 DOCKER CLEANUP COMMANDS
+(23) docker system prune                  remove unused Docker resources
+(24) docker rmi -f $(docker images -aq)   Force remove all Docker images
            
 
 **************************************************************************************************************
@@ -965,7 +968,7 @@ docker-compose.yml
        - two-tier
 
      restart: always
-     
+
      healthcheck:
        test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
        interval: 10s

@@ -9,7 +9,7 @@ RUN pip install --upgrade pip
 
 # (4) Install required system packages for mysqlclient
 RUN apt-get update \
-    && apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+    && apt-get install -y  gcc  default-libmysqlclient-dev  pkg-config  curl \
     && rm -rf /var/lib/apt/lists/*
 
 # (5) Copy the requirements file

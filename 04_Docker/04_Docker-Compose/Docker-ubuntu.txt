@@ -817,3 +817,258 @@ devops
 (c) Check the data:
 - SELECT * FROM messages;
 
+
+************************************************************************************************************************************************************************
+==============================================================================================
+                    DOCKER COMPOSE
+                         DAY-3
+==============================================================================================
+
+🌸 WHAT IS DOCKER COMPOSE?
+-  Docker Compose = Manage multiple containers using one file.
+
+# Instead of running multiple `docker run` commands, we define the configuration in one file.
+-  docker-compose.yml or
+-  docker-compose.yaml
+
+# Then start everything with
+- docker compose up
+
+
+===============================================================
+🌸 BASIC DOCKER COMPOSE FILE
+===============================================================
+# Example
+
+   services:
+
+      mysql:
+        image: mysql:9.7
+
+     flask-app:
+           build: .
+
+
+===============================================================
+🌸 IMPORTANT OPTIONS
+===============================================================
+(1) services
+-  Defines the containers/services.
+
+image
+    Specifies an existing Docker image.
+
+    image: mysql:9.7
+
+build
+    Builds an image using a Dockerfile.
+
+    build: .
+
+ports
+    Maps Host Port : Container Port.
+
+    ports:
+      - "5000:5000"
+
+environment
+    Passes environment variables to the container.
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+depends_on
+    Controls the startup order of services.
+
+    depends_on:
+      - mysql
+
+volumes
+    Used to persist data, especially MySQL data.
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+
+===============================================================
+🌸 FLASK + MYSQL DOCKER COMPOSE
+===============================================================
+
+docker-compose.yml
+
+    services:
+
+      mysql:
+        image: mysql:9.7 (do not use latest)
+        container_name: mysql-container
+        ports:
+      
+
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: devops
+        ports:
+          - "3306:3306"
+        volumes:
+          - mysql-data:/var/lib/mysql
+
+      flask-app:
+        build: .
+        environment:
+          MYSQL_HOST: mysql
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_DB: devops
+        ports:
+          - "5000:5000"
+        depends_on:
+          - mysql
+
+    volumes:
+      mysql-data:
+
+
+===============================================================
+🌸 IMPORTANT: MYSQL_HOST
+===============================================================
+
+Here:
+
+    MYSQL_HOST: mysql 
+
+ `mysql` is the MySQL service name:
+
+    services:
+      mysql:
+
+Docker Compose provides DNS between services.
+
+Therefore Flask can connect to:
+
+    mysql:3306
+
+Do NOT normally use:
+
+    MYSQL_HOST: localhost
+
+because inside the Flask container:
+
+    localhost = Flask container itself
+
+
+===============================================================
+🌸 IMPORTANT DOCKER COMPOSE COMMANDS
+===============================================================
+(1) Start containers:
+-  docker compose up
+
+(2) Start in background:
+-  docker compose up -d
+
+(3) Build and start:
+-  docker compose up --build
+
+(4) Check containers:
+-  docker compose ps
+-  docker compose ps -a
+
+(5) View logs:
+-  docker compose logs
+
+(6) View logs continuously:
+-  docker compose logs -f
+
+(7) Stop containers:
+-  docker compose stop
+
+(8) Stop & remove containers:
+-  docker compose down
+
+(9) Restart containers:
+-  docker compose restart
+
+(10) Enter a container:
+-  docker compose exec mysql-container bash
+
+
+===============================================================
+🌸 CHECK MYSQL
+===============================================================
+# Enter MySQL:
+-  docker compose exec mysql-container mysql -u root -p
+
+# Then Enter
+-  SHOW DATABASES;
+-  USE devops;
+-  SHOW TABLES;
+-  SELECT * FROM messages;
+
+
+===============================================================
+🌸 COMMON CHECKS
+===============================================================
+(1) Check containers:
+-  docker compose ps
+
+(2) Check Flask logs:
+-  docker compose logs flask-app
+
+(3) Check MySQL logs:
+-  docker compose logs mysql
+
+(4) Check Docker networks:
+-  docker network ls
+
+(5) Check Docker Volumes:
+-  docker volume ls
+
+(6)Check listening TCP ports on EC2:
+-   sudo ss -ltnp
+
+
+===============================================================
+🌸 IMPORTANT CONCEPT
+===============================================================
+# Without Compose:
+   docker network create
+   docker volume create
+   docker run mysql
+   docker run flask
+
+# With Compose:
+   docker compose up -d
+
+# Everything is defined inside:
+   docker-compose.yml
+
+
+===============================================================
+🌸 QUICK REVISION
+===============================================================
+# Docker Compose = Manage multiple containers using one file.
+
+# Important:
+
+    services
+    image
+    build
+    ports
+    environment
+    depends_on
+    volumes
+
+# Most important command:
+-  docker compose up -d
+
+# Stop/remove:
+-  docker compose down
+
+# Key concept:
+
+    Flask
+      |
+      | MYSQL_HOST=mysql
+      v
+    MySQL
+
+===================================================================

@@ -1,11 +1,11 @@
-              DAY-1
-            =========
-
+============================================================================================================================================
+🧣 DAY-1  Docker-Introduction/ Dockerfile
+============================================================================================================================================
 🌸 Install Docker In Ubuntu
 --> sudo apt-get install docker.io
 --> sudo install docker.io
 
-************************************************************************************************************
+
 🌸 Check the Current Status of the Docker Service
 --> sudo systemctl status docker
 
@@ -14,7 +14,7 @@ systemctl:- A tool that controls systemd services (start, stop, restart, check s
 status:- Shows detailed information.
 docker:- The service name—here it's the Docker Engine.
 
-*************************************************************************************************************
+******************************************************************************************************************************************
 🌸 Some Important Commands
      Commands                                  Meaning
 (1) docker -v                              show docker version2
@@ -52,7 +52,7 @@ docker:- The service name—here it's the Docker Engine.
 (24) docker rmi -f $(docker images -aq)   Force remove all Docker images
            
 
-**************************************************************************************************************
+*****************************************************************************************************************************************
 🌸 Add your current user to the docker group, so you can run Docker without using sudo every time.
 --> sudo usermod -aG docker $USER
 
@@ -64,7 +64,7 @@ Where
 G (group) → specifies which group
 $USER:- current loggedIn user
 
-***************************************************************************************************************
+*****************************************************************************************************************************************
 🌸 Docker Images:
 --> A Docker image is a lightweight, executable package that contains everything needed to run an
     application, including code, runtime, libraries, and dependencies.
@@ -79,10 +79,10 @@ $USER:- current loggedIn user
 
 --> docker run hello-world (create Images + conatiner)
 
-****************************************************************************************************************
+*****************************************************************************************************************************************
 🌸 (2) mysql (pre-build Images)
 --> docker pull mysql
---> docker run --name customContainerName mysql
+--> docker run --name custom-ContainerName mysql
 
 docker run -d \
 --name mysql-docker \
@@ -97,27 +97,26 @@ mysql
 -p 3306:3306 → Expose MySQL port
 mysql → Image name
 
---> docker start ContainerName
 
 🌸 Enter a running Docker Container Interactively.
 --> docker exec -it mysql-latest bash 
 
  Part	                  Meaning
-docker exec	  Run a command inside an already running container
--i	          Interactive mode
--t	          Allocates a terminal
-mysql-latest	  Container name
-bash	          Open Bash shell inside container
+docker exec	      Run a command inside an already running container
+-i	              Interactive mode
+-t	              Allocates a terminal
+mysql-latest	    Container name
+bash	            Open Bash shell inside container
 
 
 🌸 Log in to the MySQL server using the MySQL CLI
 --> mysql -u root -p
 
- Part	   Meaning
-mysql	MySQL command-line client program
--u	Stands for user
-root	Username (default MySQL admin user)
--p	Prompt for password
+ Part	           Meaning
+ mysql	     MySQL command-line client program
+ -u	         Stands for user
+ root	       Username (default MySQL admin user)
+ -p	         Prompt for password
 
 🧠 What Happens When You Run It?
 --> When you execute:- mysql -u root -p
@@ -138,34 +137,29 @@ root	Username (default MySQL admin user)
 🌸 Delete databse
 --> DROP DATABASE myDevopsProjects;
 
-******************************************************************************************************************
-
+***************************************************************************************************************************************
 🌸 (3) ubuntu Image (both are same)
 --> docker run -it -d ubuntu
 --> docker run -itd ubuntu
 
-******************************************************************************************************************
-🌸 Dockerfile for Java
+
+***************************************************************************************************************************************
+***************************************************************************************************************************************
+🌸 Dockerfile for JAVA 
 
 # (1) Pull a base images which gives all the required tools & Libraries (stable official Java runtime base image)                            
-FROM eclipse-temurin:17-jdk                                                                                                                                                          
-                                                                                                                                          
+FROM eclipse-temurin:17-jdk                                                                                                                                                                                                                                                                
 # (2) Create a folder where the app code will be stored (working directory)                        
 WORKDIR /app    
                                              
 # (3) Copy source code from HOST machine into the container                    
 COPY src/Main.java /app/Main.java   
-                                                                                                                                                         
+                                                                                                                                              
 # (4) Compile the Java code                                                                        
 RUN javac Main.java           
-                                                                                                                                                               
+                                                                                                                                                
 # (5) Run the Java application when the container starts                                           
 CMD ["java", "Main"]  
-
-
-🧠 One-Line Interview Answer
---> ENTRYPOINT is used when the container should always run a specific application,
-    while CMD provides a default command that users can override.
 
 
 🌸 Build Images
@@ -180,155 +174,40 @@ CMD ["java", "Main"]
 (3) . The dot at the end means: Build context is the current directory
 
 --> docker run java-app
---> docker run --name customName java-app
---> docker run -d -it --name customName java-app
+--> docker run --name custom_Name java-app
+--> docker run -d -it --name custom_Name java-app
 
-*********************************************************************************************************************
+*****************************************************************************************************************************************
+🌸 Dockerfile for FLASK-APP
 
-
-docker run -d -it java-app
-docker run java-app
-docker run java-app bash
-
-Under 2 scenarios:
-✅ Scenario 1 → Using CMD
-✅ Scenario 2 → Using ENTRYPOINT
-
-
-🌸 Dockerfile (Scenario 1)
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY src/Main.java /app/Main.java
-RUN javac Main.java
-CMD ["java", "Main"]
-
-
-Your Java program prints and exits.
-
-🟢 SCENARIO 1 — Using CMD
---> docker run java-app
-
-Runs default CMD: java Main
-✔ Prints output
-✔ Then container stops (because Java program ends)
-
---> docker run java-app bash
-
-Since you're using CMD, it gets overridden.
-
-This runs: bash
-✔ Opens bash shell
-✔ Java does NOT run
-
-:- docker run -d -it java-app
-
-
-Flags meaning:
--d → run in background
--i → interactive
--t → terminal
-
-This runs: java Main
-
-But:
-✔ It prints
-✔ Java exits
-✔ Container stops immediately
-
-Because your Java program is not long-running.
-
-🟢 CMD                          Behavior               Summary
-Command          	        What Runs	       Result
-docker run java-app	        java Main	       Prints → exits
-docker run java-app bash	bash	               Opens shell
-docker run -d -it java-app	java Main 	       Background → exits
-
-************************************************************************************************************************
-🔴 SCENARIO 2 — Using ENTRYPOINT
-
-Dockerfile
-ENTRYPOINT ["java", "Main"]
---> docker run java-app
-
-Runs: java Main
-✔ Prints
-✔ Exits
-
-Same as CMD here.
-:- docker run java-app bash
-
-Because ENTRYPOINT is fixed, this becomes:
-
-java Main bash
-
-✔ Java still runs
-✔ bash becomes argument
-✔ Does NOT open shell
-
-Very important difference.
-
-:- docker run -d -it java-app
-
-Runs: java Main
-
-✔ Runs in background
-✔ Still exits immediately
-Because Java finishes.
-
-🔴 ENTRYPOINT                   Behavior                    Summary
-Command	                        What Runs	                Result
-docker run java-app	          java Main	                Prints → exits
-docker run java-app bash	  java Main bash	        Java runs, not shell
-docker run -d -it java-app	  java Main	                Background → exits
-
-🔥 Core Difference Between CMD and ENTRYPOINT
-        Feature	                                    CMD	            ENTRYPOINT
-Can override with docker run image bash?	     ✅ Yes	              ❌ No
-Arguments                                        ❌ Replaced	       ✅ Appended
-Flexible?	                                      Yes	             No (fixed executable)
-
-🧠 Important Concept
-Your container exits quickly because:
-Container lifetime = lifetime of main process
-
-Your Java program ends → container stops.
-
-🎯 Interview Answer (Very Strong)
-
-With CMD, the command can be overridden at runtime. 
-With ENTRYPOINT, the command is fixed and any arguments passed are appended.
-The container stops when the main process finishes.
-
-**********************************************************************************************************************
-🌸 Dockerfile for flask
-# Base image (OS)
+# (1) Base image (OS)
 FROM python:3.9-slim
 
-# Working directory
+# (2) Set Working directory
 WORKDIR /app
 
-# Copy src code to container
+# (3) Copy src code to container
 COPY . .
 
-# Run the build commands
+# (4) Run the build commands
 RUN pip install -r requirements.txt
 
-# expose port 
-EXPOSE 5000
+# (5) Expose port 
+EXPOSE 80
 
-# serve the app / run the app (keep it running)
+# (6) serve the app / run the app (keep it running)
 CMD ["python", "run.py"]
 
 
 (1) Build Image
---> docker build -t flask-app .
+--> docker build -t flask-app  .
 
 (2) Run Container
---> docker run -d --name flask-docker -p 5000:5000 flask-app
+--> docker run -d --name flask-container -p 80:80 flask-app
 
 (3) Visit this in Browser
---> http://localhost:5000
---> http://localhost:5000/health
+--> http://localhost:80
+--> http://localhost:80/health
 
 
 🔹 docker logs:- It displays whatever your app prints (like Flask logs)
@@ -339,13 +218,12 @@ where
 
 
 🔹 docker attach:- Attaches your terminal directly to the container’s main process.
---> docker attach flask-docker :- update realtime
+--> docker attach flask-docker:- update realtime
 
-*********************************************************************************************************************
-*********************************************************************************************************************
-      DAY-2      
- ==============
-
+***************************************************************************************************************************************
+=======================================================================================================================================
+🧣 DAY-2  Docker Network
+=======================================================================================================================================
 🌸 Docker Network
       Driver	                            Use Case
   . bridge (default)                   Default, same host communication
@@ -367,19 +245,19 @@ where -d:- driver
 🌸 Remove a Docker Network
 --> docker network rm network_name
 
-*********************************************************************************************************************
-✅ Flask App with MySQL Docker Setup
---> A simple Flask app that interacts with a MySQL database. The app allows users to submit messages, which are then stored in the database and displayed on the frontend.
+****************************************************************************************************************************************
+✅ Flask-App + MySQL Docker Setup
+--> A simple Flask app that interacts with a MySQL database. The app allows users to submit messages, which are then stored 
+in the database and displayed on the frontend.
 
 ✅ Prerequisites
 --> Before you begin, make sure you have the following installed:
   - Docker
   - Git (optional, for cloning the repository)
 
-
 ✅ Setup
 (1) Clone this repository (if you haven't already)
---> git clone https://github.com/ankittripathe/two-tier-flaskapp-docker-network.git
+--> git clone https://github.com/ankittripathe/two-tier-flaskapp.git
 
 
 (2) Navigate to the project directory
@@ -409,6 +287,7 @@ where -d:- driver
 | -------------------- | ----------------------------------------------------------------------- |
 | 🐬 MySQL Container   | `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` |
 | 🚀 Backend Container | `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DB`                |
+
 
 
 ✅ To run this two-tier application using without docker-compose
@@ -520,12 +399,10 @@ You should see something like:
 (10) Here term volume comes in.
 - we will study in seperate project 
 
-*********************************************************************************************************************
-*********************************************************************************************************************
-
-DEY-3 Docker Volume
-===================
-
+****************************************************************************************************************************************
+========================================================================================================================================
+🧣 DAY-3  Docker Volume & Storage
+========================================================================================================================================
 🌼 Docker Volume
 
 (1) List docker volumes
@@ -576,6 +453,7 @@ Host folder → MySQL's data directory
 
 /home/ubuntu/volumes/mysql = Host folder
 /var/lib/mysql = MySQL container data directory
+Myfolder: /home/ubuntu/DevOps_FullCourse/04_Docker/03_Docker-Volume_and_Storage/volumes/mysql
 
 
 ****************************************************************************************************
@@ -662,8 +540,9 @@ Flask Container           MySQL Container
 (5) Then: Enter some data at UI part.
 
 Example:
-hello
-namaste
+  hello
+  namaste
+  xyz
 
 
 (6) Delete mysql-container, and run again using same storage
@@ -765,12 +644,10 @@ This is the actual location of the volume data on the Docker host
 🌼 How to See Bind Mount Data
 
 (i) Navigate to the Host Folder
-
 - cd /home/ubuntu/volumes/mysql
 
 
 (ii) List the Stored Data
-
 - ls
 
 You will see MySQL's stored files and directories.
@@ -791,7 +668,6 @@ You will see MySQL's stored files and directories.
 
 ========================================================================
 
-
 (7) Connect to MySQL Container
 
 (a) Enter the MySQL container
@@ -805,27 +681,21 @@ You will see MySQL's stored files and directories.
 
 
 (8) Check the Database
-
 (a) Inside MySQL
 - SHOW DATABASES;
 
-You should see:
-devops
-
+You should see: devops
 
 (b) Select the database
 - USE devops;
 
-
 (c) Check the data:
 - SELECT * FROM messages;
 
-
-************************************************************************************************************************************************************************
-==============================================================================================
-                    DOCKER COMPOSE
-                         DAY-3
-==============================================================================================
+*************************************************************************************************************************************
+=====================================================================================================================================
+🧣 DAY-4 DOCKER COMPOSE
+=====================================================================================================================================
 
 🌸 WHAT IS DOCKER COMPOSE?
 -->  Docker Compose = Manage multiple containers using one file.
@@ -836,7 +706,6 @@ devops
 
 # Then start everything with
 -->  docker compose up
-
 
 ===============================================================
 🌸 BASIC DOCKER COMPOSE FILE
@@ -850,7 +719,6 @@ devops
 
       flask-app:
         build: .
-
 
 ===============================================================
 🌸 IMPORTANT OPTIONS

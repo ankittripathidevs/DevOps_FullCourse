@@ -786,7 +786,7 @@ You should see: devops
 docker-compose.yml
 
     mysql:
-      image: mysql:9.7 (don't use latest for best pratice, alwasy mention version)
+      image: mysql:9.7  (don't use latest for best pratice, always mention version)
       container_name: mysql-container
 
       ports:
@@ -800,6 +800,9 @@ docker-compose.yml
 
       volumes:
         - mysql-data:/var/lib/mysql
+
+        # Instead of keeping MySQL's data only inside the container, store it on my Ubuntu machine at 
+        - /home/ubuntu/volumes/mysql:/var/lib/mysql
 
       networks:
         - two-tier
@@ -896,21 +899,21 @@ Here:
 -  docker compose restart
 
 (10) Enter a container:
--  docker compose exec mysql-container bash
+-  docker compose exec -it mysql bash
 
+Here:- mysql is service_Name not conatiner_Name 
 
 ===============================================================
 🌸 CHECK MYSQL
 ===============================================================
 # Enter MySQL:
--  docker compose exec mysql-container mysql -u root -p
+-  docker compose exec  -it mysql mysql -u root -p
 
 # Then Enter
 -  SHOW DATABASES;
 -  USE devops;
 -  SHOW TABLES;
 -  SELECT * FROM messages;
-
 
 ===============================================================
 🌸 COMMON CHECKS
@@ -932,7 +935,6 @@ Here:
 
 (6)Check listening TCP ports on EC2:
 -   sudo ss -ltnp
-
 
 ===============================================================
 🌸 IMPORTANT CONCEPT

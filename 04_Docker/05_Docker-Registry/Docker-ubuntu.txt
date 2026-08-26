@@ -2,17 +2,30 @@
 🧣 DAY-1  Docker-Introduction/ Dockerfile
 ============================================================================================================================================
 🌸 Install Docker In Ubuntu
+Step 1: update
+--> sudo apt-get update
+
+Step 2: Install Docker
 --> sudo apt-get install docker.io
 --> sudo install docker.io
 
 
 🌸 Check the Current Status of the Docker Service
+Step 3: Start, Enable, Check Docker
+--> sudo systemctl start docker
+--> sudo systemctl enable docker
 --> sudo systemctl status docker
 
 sudo:- Runs the command with admin(root) permissions.
 systemctl:- A tool that controls systemd services (start, stop, restart, check status).
 status:- Shows detailed information.
 docker:- The service name—here it's the Docker Engine.
+
+Step 4: Check Docker Installation
+--> docker --version
+
+Step 5: Test Example 
+--> sudo docker run hello-world
 
 ******************************************************************************************************************************************
 🌸 Some Important Commands
@@ -51,7 +64,6 @@ docker:- The service name—here it's the Docker Engine.
 (23) docker system prune                  remove unused Docker resources
 (24) docker rmi -f $(docker images -aq)   Force remove all Docker images
            
-
 *****************************************************************************************************************************************
 🌸 Add your current user to the docker group, so you can run Docker without using sudo every time.
 --> sudo usermod -aG docker $USER

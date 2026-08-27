@@ -1129,4 +1129,160 @@ Step.7 Pull the Image from Docker Hub
 =================================================================================================================================================
 🧣  DAY-6 Multi-Stage Docker Builds 
 =================================================================================================================================================
+Multi-Stage Build?
 
+Uses multiple FROM statements to separate build and production stages.
+
+Builder Stage
+     ↓
+Install / Build
+     ↓
+Copy required files
+     ↓
+Final Stage
+     ↓
+Smaller image
+
+Benefits:
+- Smaller image
+- Better security
+- Faster deployment
+- Useful for CI/CD
+
+
+================================================================================
+
+2. Single-Stage vs Multi-Stage
+
+Single-Stage:
+
+FROM python:3.14
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+
+EXPOSE 80
+CMD ["python", "run.py"]
+
+
+Multi-Stage:
+
+FROM python:3.14 AS builder
+
+WORKDIR /app
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt --target=/app/deps
+
+COPY . .
+
+
+FROM python:3.14-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/deps /app/deps
+
+ENV PYTHONPATH=/app/deps
+
+COPY . .
+
+EXPOSE 80
+CMD ["python", "run.py"]
+
+
+================================================================================
+
+3. Important Multi-Stage Commands
+
+FROM python:3.14 AS builder
+
+→ Creates and names the builder stage.
+
+
+RUN pip install --target=/app/deps
+
+→ Installs dependencies into /app/deps.
+
+
+COPY --from=builder /app/deps /app/deps
+
+→ Copies dependencies from builder to final stage.
+
+
+ENV PYTHONPATH=/app/deps
+
+→ Tells Python where to find the dependencies.
+
+
+================================================================================
+
+4. Dockerfile Name
+
+Create:
+
+Dockerfile-multi
+
+
+Build:
+
+docker build -f Dockerfile-multi -t flask-app:multi .
+
+
+Run:
+
+docker run -d --name flask-app -p 80:80 flask-app:multi
+
+
+================================================================================
+
+5. Useful Commands
+
+Check images:
+
+docker images
+
+Check containers:
+
+docker ps
+
+Check logs:
+
+docker logs flask-app
+
+Stop:
+
+docker stop flask-app
+
+Remove:
+
+docker rm flask-app
+
+
+================================================================================
+
+🎯 KEY CONCEPT
+
+FROM <image> AS <stage-name>
+
+COPY --from=<stage-name> <source> <destination>
+
+Example:
+
+FROM python:3.14 AS builder
+
+...
+
+FROM python:3.14-slim
+
+COPY --from=builder /app/deps /app/deps
+
+
+Build and run only the multi-stage Dockerfile:
+
+docker build -f Dockerfile-multi -t flask-app:multi .
+
+docker run -d --name flask-app -p 80:80 flask-app:multi
+================================================================================

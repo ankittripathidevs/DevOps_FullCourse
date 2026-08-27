@@ -977,3 +977,156 @@ Here:- mysql is service_Name not conatiner_Name
 =================================================================================================================================================
 🧣  DAY-5 Docker Registry
 =================================================================================================================================================
+🌸 Docker Registry
+
+Step.1 Login in to your Docker account from the terminal
+--> docker login
+
+
+Setp.2 You may see
+--> Athenticating with existing credentials... [Username: ankittripathidocker]
+--> This confirms that Docker is using your existing Docker Hub credentials.
+
+
+Setp.3 Check Existing Docker Images
+--> docker images
+
+# Example
+--> two-tier-flask-app-flask-app:latest
+
+  two-tier-flask-app-flask-app
+  │ │
+  │ └── Tag
+  └───────────────────────────── Image name
+
+
+Step.4 Tag the Image for Docker Hub
+# To push an image to Docker Hub, give it a Docker Hub-compatible name
+
+-->  docker image tag two-tier-flask-app-flask-app  ankittripathidocker/two-tier-backend
+
+# Image naming format
+-->  <docker-username>/<repository-name>:<tag>
+
+# Example
+
+  ankittripathidocker/two-tier-backend
+  │ │ │
+  │ │ └── Tag
+  │ └──────────────────── Repository name
+  └────────────────────────────────────── Docker Hub username
+
+# What changed?
+-->  Old/local image:  two-tier-flask-app-flask-app:latest
+
+-->  New Docker Hub tag: ankittripathidocker/two-tier-backend:latest
+
+# IMPORTANT
+-->  docker image tag does not create a second copy of the image's data. It creates another tag/reference pointing to the same image.
+
+# Verify the New Image Tag
+-->  docker images
+
+# Output
+-->  ankittripathidocker/two-tier-backend:latest
+-->  two-tier-flask-app-flask-app:latest
+
+# The important image is
+-->  ankittripathidocker/two-tier-backend
+
+
+Step.5 Push the Image to Docker Hub
+-->  docker push ankittripathidocker/two-tier-backend:latest
+
+-->  Docker will upload the image layers to your Docker Hub repository.
+
+
+Step.6 Check the Image on Docker Hub
+# Open your Docker Hub repositories:
+-->  https://hub.docker.com/repositories/ankittripathidocker
+
+# You should find the repository:
+-->  two-tier-backend
+
+## with the tag:
+-->  latest
+
+
+Step.7 Pull the Image from Docker Hub
+# Once the image is available on Docker Hub, you can download it to another machine.
+-->  docker pull ankittripathidocker/two-tier-backend
+
+
+--> This is useful when deploying the application on another server or EC2 instance.
+--> You do not need to build the image locally if the required image already exists in Docker Hub.
+--> Using the Docker Hub Image in Docker Compose
+
+
+# Previously, the docker-compose.yml may build the Flask application locally:
+
+  flask-app:
+        build:
+         context: .
+
+--> Here, Docker Compose builds the image using the local Dockerfile and application source code.
+
+# Instead, you can use the image that has already been pushed to Docker Hub:
+
+   flask-app:
+       image: ankittripathidocker/two-tier-backend:latest
+
+# BEFORE:
+
+    flask-app:
+         build:
+           context: .
+
+# AFTER:
+ 
+     flask-app:
+         image: ankittripathidocker/two-tier-backend:latest
+
+
+--> Now Docker Compose can pull the image from Docker Hub instead of building it locally.
+
+
+
+🌸 Important Commands
+(1) Login
+--> docker login
+
+(2) Check images
+--> docker images
+
+(3) Tag an image
+--> docker image tag OLD_IMAGE USERNAME/REPOSITORY
+
+# Example:
+--> docker image tag two-tier-flask-app-flask-app:latest   ankittripathidocker/two-tier-backend:latest
+
+(4) Push image
+--> docker push ankittripathidocker/two-tier-backend:latest
+
+(5) Pull image
+--> docker pull ankittripathidocker/two-tier-backend:latest
+
+(6) Run Compose using the Docker Hub Image
+--> docker compose up -d
+
+
+🌸  KEY CONCEPT
+--> The main idea of a Docker Registry is that you don't have to build your Docker image on every machine.
+--> You can:
+  - Build the image once.
+  - Tag it with your Docker Hub username and repository.
+  - Push it to Docker Hub.
+  - Pull it from any machine.
+  - Use that image directly in Docker Compose.
+
+--> This is especially useful for CI/CD and deployment because the server can pull a pre-built image rather than rebuilding the application every time.
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣  DAY-6 Multi-Stage Docker Builds 
+=================================================================================================================================================
+

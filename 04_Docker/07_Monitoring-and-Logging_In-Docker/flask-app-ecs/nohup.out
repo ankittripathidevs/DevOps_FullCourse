@@ -1507,3 +1507,9 @@ cannot attach to a stopped container, start it first
 202.173.124.49 - - [29/Aug/2026 11:26:22] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
 172.172.164.74 - - [29/Aug/2026 12:00:56] code 400, message Bad request syntax ('MGLNDD_32.185.250.15_80')
 172.172.164.74 - - [29/Aug/2026 12:00:56] "[31m[1mMGLNDD_32.185.250.15_80[0m" 400 -
+202.173.124.49 - - [29/Aug/2026 12:33:29] "GET / HTTP/1.1" 200 -
+202.173.124.49 - - [29/Aug/2026 12:33:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+160.119.76.210 - - [29/Aug/2026 13:05:08] code 400, message Bad request version ("¼(ð\x95»a\x13\x10L\x00Þ\x13\x01\x13\x02\x13\x03\x13\x04\x13\x05À,À0\x00£\x00\x9fÌ©Ì¨ÌªÀ¯À\xadÀ£À\x9fÀ]ÀaÀWÀS\x00§À+À/\x00¢\x00\x9eÀ®À¬À¢À\x9eÀ\\À`ÀVÀR\x00¦À$À(\x00k\x00jÀsÀw\x00Ä\x00Ã\x00m\x00ÅÀ#À'\x00g\x00@ÀrÀv\x00¾\x00½\x00l\x00¿À")
+160.119.76.210 - - [29/Aug/2026 13:05:08] "[31m[1m\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\x03\x01\x01À\x01\x00\x01¼\x03\x03&\x96<ù\x01mùZ(ýù¥\x00½÷e«\x8f´\x15(ºÁêc\x82Ú(\x97\x84@\x1b j\x02¦)v$/0\x7fÞ\x9f`¦\x1fOê\x9bÓE\x97+\x89\x09¼(ð\x95»a\x13\x10L\x00Þ\x13\x01\x13\x02\x13\x03\x13\x04\x13\x05À,À0\x00£\x00\x9fÌ©Ì¨ÌªÀ¯À­À£À\x9fÀ]ÀaÀWÀS\x00§À+À/\x00¢\x00\x9eÀ®À¬À¢À\x9eÀ\\À`ÀVÀR\x00¦À$À(\x00k\x00jÀsÀw\x00Ä\x00Ã\x00m\x00ÅÀ#À'\x00g\x00@ÀrÀv\x00¾\x00½\x00l\x00¿À[0m" 400 -
+/usr/local/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-_ibj8feo'}
+  warnings.warn(

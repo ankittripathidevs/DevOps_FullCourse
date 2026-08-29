@@ -1,0 +1,1273 @@
+=================================================================================================================================================
+🧣 DAY-1  Docker-Introduction/ Dockerfile
+=================================================================================================================================================
+🌸 Install Docker In Ubuntu
+Step 1: update
+--> sudo apt-get update
+
+Step 2: Install Docker
+--> sudo apt-get install docker.io
+--> sudo install docker.io
+
+
+🌸 Check the Current Status of the Docker Service
+Step 3: Start, Enable, Check Docker
+--> sudo systemctl start docker
+--> sudo systemctl enable docker
+--> sudo systemctl status docker
+
+sudo:- Runs the command with admin(root) permissions.
+systemctl:- A tool that controls systemd services (start, stop, restart, check status).
+status:- Shows detailed information.
+docker:- The service name—here it's the Docker Engine.
+
+Step 4: Check Docker Installation
+--> docker --version
+
+Step 5: Test Example 
+--> sudo docker run hello-world
+
+*************************************************************************************************************************************************
+🌸 Some Important Commands
+     Commands                                  Meaning
+(1) docker -v                              show docker version2
+(2) docker version                         show docker version in details
+(3) docker info                            display system-wide information
+
+(4) docker ps                              list all running containers
+(5) docker ps -a                           list running + stopped conatiners
+(6) docker images                          List all Images
+(7) docker images -a                       list all stagged & unstagged images
+
+(8) docker login                           Authenticate to a registry
+(9) docker logout                          Log out from a registry
+
+(10) docker build                          Build an image from a Dockerfile
+(11) docker run                            Create & run a new container from an image
+(12) docker exec                           Execute a command in a running container
+(13) docker pull                           Download an image from a registry
+(14) docker push                           Upload an Image to a registry
+
+(15) docker stop Container-Name/Id         Stop running docker-Container
+(16) docker start Container-Name/Id        Start docker Container
+(17) docker rm Conatiner-Name/Id           Remove docker Conatiner
+(18) docker rmi Conatiner-Id/Repo          Remove docker Images
+
+(19) docker stop conatiner-Name            Stop & Remove docker Container
+     && docker rm conatiner-Name
+
+(20) docker restart container-Name         Restart Docker Conatiner
+(21) docker rm -f conatiner-Name           delete running container
+(22) docker image prune                    remove unstagged images 
+
+🌸 DOCKER CLEANUP COMMANDS
+(23) docker system prune                  remove unused Docker resources
+(24) docker rmi -f $(docker images -aq)   Force remove all Docker images
+           
+*************************************************************************************************************************************************
+🌸 Add your current user to the docker group, so you can run Docker without using sudo every time.
+--> sudo usermod -aG docker $USER
+
+sudo:- Run the command as admin
+usermod:- modifies a user account.
+-aG:- add Group
+Where 
+-a (append) → adds user to a group,
+G (group) → specifies which group
+$USER:- current loggedIn user
+
+*************************************************************************************************************************************************
+🌸 Docker Images:
+--> A Docker image is a lightweight, executable package that contains everything needed to run an
+    application, including code, runtime, libraries, and dependencies.
+
+🌸 DockerFile
+--> A Dockerfile is a text file that contains instructions to build a Docker image automatically.
+
+🌸 (1) hello-world (pre-build Images)
+--> docker pull hello-world  (create Images)
+--> docker run hello-world   (create container)
+--> docker run --name custom_ConatinerName hello-world
+
+--> docker run hello-world (create Images + conatiner)
+
+*************************************************************************************************************************************************
+🌸 (2) mysql (pre-build Images)
+--> docker pull mysql
+--> docker run --name custom-ContainerName mysql
+
+docker run -d \
+--name mysql-docker \
+-e MYSQL_ROOT_PASSWORD=root \
+-p 3306:3306 \
+mysql
+
+🔎 Explanation:
+-d → Run in background
+--name mysql-container → Container name
+-e MYSQL_ROOT_PASSWORD= → Required root password
+-p 3306:3306 → Expose MySQL port
+mysql → Image name
+
+
+🌸 Enter a running Docker Container Interactively.
+--> docker exec -it mysql-latest bash 
+
+ Part	                  Meaning
+docker exec	      Run a command inside an already running container
+-i	              Interactive mode
+-t	              Allocates a terminal
+mysql-latest	    Container name
+bash	            Open Bash shell inside container
+
+
+🌸 Log in to the MySQL server using the MySQL CLI
+--> mysql -u root -p
+
+ Part	           Meaning
+ mysql	     MySQL command-line client program
+ -u	         Stands for user
+ root	       Username (default MySQL admin user)
+ -p	         Prompt for password
+
+🧠 What Happens When You Run It?
+--> When you execute:- mysql -u root -p
+(Take password from here :- myqsl -e MYSQL_ROOT_PASSWORD=root)
+--> It will ask:- Enter password: root
+
+
+🔹 Directly Login to MySQL (Recommended)
+--> docker exec -it mysql-docker mysql -u root -p
+
+
+🌸 Show databases
+--> show databases;
+
+🌸 Create databases
+--> create database myDevopsProjects;
+
+🌸 Delete databse
+--> DROP DATABASE myDevopsProjects;
+
+*************************************************************************************************************************************************
+🌸 (3) ubuntu Image (both are same)
+--> docker run -it -d ubuntu
+--> docker run -itd ubuntu
+
+
+*************************************************************************************************************************************************
+*************************************************************************************************************************************************
+🌸 Dockerfile for JAVA 
+
+# (1) Pull a base images which gives all the required tools & Libraries (stable official Java runtime base image)                            
+FROM eclipse-temurin:17-jdk                                                                                                                                                                                                                                                                
+# (2) Create a folder where the app code will be stored (working directory)                        
+WORKDIR /app    
+                                             
+# (3) Copy source code from HOST machine into the container                    
+COPY src/Main.java /app/Main.java   
+                                                                                                                                              
+# (4) Compile the Java code                                                                        
+RUN javac Main.java           
+                                                                                                                                                
+# (5) Run the Java application when the container starts                                           
+CMD ["java", "Main"]  
+
+
+🌸 Build Images
+--> docker build -t java-app .
+
+(1) docker build:- This tells Docker to build a new image using the Dockerfile in the current folder.
+(2) -t java-app:-  -t means tag
+    -> java-app:- The name/tag of the image 
+    -> It helps you identify the image later
+    -> So this creates an image named: java-app:latest
+    -> If you don’t specify the version tag, Docker automatically uses latest
+(3) . The dot at the end means: Build context is the current directory
+
+--> docker run java-app
+--> docker run --name custom_Name java-app
+--> docker run -d -it --name custom_Name java-app
+
+*************************************************************************************************************************************************
+🌸 Dockerfile for FLASK-APP
+
+# (1) Base image (OS)
+FROM python:3.9-slim
+
+# (2) Set Working directory
+WORKDIR /app
+
+# (3) Copy src code to container
+COPY . .
+
+# (4) Run the build commands
+RUN pip install -r requirements.txt
+
+# (5) Expose port 
+EXPOSE 80
+
+# (6) serve the app / run the app (keep it running)
+CMD ["python", "run.py"]
+
+
+(1) Build Image
+--> docker build -t flask-app  .
+
+(2) Run Container
+--> docker run -d --name flask-container -p 80:80 flask-app
+
+(3) Visit this in Browser
+--> http://localhost:80
+--> http://localhost:80/health
+
+
+🔹 docker logs:- It displays whatever your app prints (like Flask logs)
+--> docker logs flask-docker 
+--> docker logs -f flask-docker
+where
+-f = follow (live streaming logs)
+
+
+🔹 docker attach:- Attaches your terminal directly to the container’s main process.
+--> docker attach flask-docker:- update realtime
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣 DAY-2  Docker Network
+=================================================================================================================================================
+🌸 Docker Network
+      Driver	                            Use Case
+  . bridge (default)                   Default, same host communication
+  . user defined bridge (custom)       Custom 
+  . host                               Container uses host network
+  . None                               No networking
+
+  . MACVLAN (docker swarm)
+  . IPVLAN
+  . Overlay
+
+🌸 List network
+--> docker network ls
+
+🌸 Create network
+--> docker network create ankit_network -d bridge
+where -d:- driver
+
+🌸 Remove a Docker Network
+--> docker network rm network_name
+
+*************************************************************************************************************************************************
+✅ Flask-App + MySQL Docker Setup
+--> A simple Flask app that interacts with a MySQL database. The app allows users to submit messages, which are then stored 
+in the database and displayed on the frontend.
+
+✅ Prerequisites
+--> Before you begin, make sure you have the following installed:
+  - Docker
+  - Git (optional, for cloning the repository)
+
+✅ Setup
+(1) Clone this repository (if you haven't already)
+--> git clone https://github.com/ankittripathe/two-tier-flaskapp.git
+
+
+(2) Navigate to the project directory
+--> cd two-tier-flaskapp
+
+(3) MySQL Container Setup
+--> This is used when you run the MySQL Docker container.
+
+
+🔹 These variables are for MySQL image only.
+|-----------------------|----------------------------------|
+| Variable              | Purpose                          |
+| --------------------- | -------------------------------- |
+| `MYSQL_ROOT_PASSWORD` | Sets root password               |
+| `MYSQL_DATABASE`      | Creates database automatically   |
+| `MYSQL_USER`          | (optional) create new user       |
+| `MYSQL_PASSWORD`      | (optional) password for new user |
+|-----------------------|----------------------------------|
+
+(4) MySQL configuration For Backend Container (Flask / Node / Java)
+
+-e MYSQL_HOST=mysql-conatinerName
+-e MYSQL_USER=your_username (example:- root)
+-e MYSQL_PASSWORD=your_password (example:- root)
+-e MYSQL_DB=your_database (example:- devops)
+
+|----------------------|-------------------------------------------------------------------------|
+|  Where Used          |  Variables                                                              |
+| -------------------- | ----------------------------------------------------------------------- |
+| 🐬 MySQL Container   | `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` |
+| 🚀 Backend Container | `MYSQL_HOST`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DB`                |
+|----------------------|-------------------------------------------------------------------------|
+
+
+✅ To run this two-tier application using without docker-compose
+
+(1) First create a docker image from Dockerfile
+--> docker build -t flask-app .
+
+
+(2) Now, make sure that you have created a network using following command
+--> docker network create custom-NetworkName
+
+# Example
+ --> docker network create two-tier
+
+# Check network list
+ --> docker network ls
+
+# Shows complete details about Docker network
+ --> docker network inspect network_name
+
+
+(3) Attach both the containers in the same network, so that they can communicate with each other
+
+(i) MySQL container
+
+docker run -d \
+    --name mysql-docker \
+    --network=two-tier \
+    -e MYSQL_ROOT_PASSWORD=root \
+    -e MYSQL_DATABASE=devops \
+    -p 3306:3306 \
+    mysql:latest
+
+(ii) flaskapp (Backend container)
+
+docker run -d \
+    --name flaskapp-docker \
+    --network=two-tier \
+    -e MYSQL_HOST=mysql-docker \ (This should be the container name of mysql)
+    -e MYSQL_USER=root \
+    -e MYSQL_PASSWORD=root \
+    -e MYSQL_DB=devops \
+    -p 5000:5000 \
+    flaskapp:latest
+
+✅ Steps to Check Whether Data Is Stored in MySQL Database
+
+(1) Check Docker Container Logs
+--> Use this to verify if MySQL or backend container has any errors.
+
+--> docker logs container_Name/Id
+
+
+(2) Verify Both Containers Are in the Same Network
+--> This ensures backend can connect to MySQL.
+
+--> docker network inspect network_Name
+
+(3) Login to MySQL Container
+--> Use this command to enter MySQL shell.
+
+--> docker exec -it mysql-docker
+
+🔹 Now you are inside the container.
+--> mysql -u root -p
+Then it will ask:- Enter password: root
+
+(4) Show All Databases
+--> SHOW DATABASES;
+--> show databases;
+
+You should see something like:
++--------------------+
+| Database           |
++--------------------+
+| devops             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+🔹 This confirms your devops database is created.
+
+(5) Select Your Database
+--> USE devops;
+--> use devops;
+--> This switches to your project database.
+
+(6) View All Messages (Check Table Data)
+--> SELECT * FROM messages;
+--> select * from messages;
+--> This shows all rows stored inside the messages table.
+
+(7) Restart Docker Container
+--> docker restart mysql-docker
+
+🔹 Useful if MySQL gets stuck or you changed environment variables.
+
+(8) Stop & Remove Container
+--> docker stop mysql-docker && docker rm mysql-docker
+
+🔹 Stops and deletes the container
+(Your data will be lost if you're not using a volume!)
+
+(9) Refresh Frontend (Flask)
+# If the backend cannot connect to MySQL, you might see:
+--> OperationalError
+
+(10) Here term volume comes in.
+- we will study in seperate project 
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣 DAY-3  Docker Volume & Storage
+=================================================================================================================================================
+🌼 Docker Volume
+
+(1) List docker volumes
+- docker volume ls
+
+(2) Create a docker volume
+- docker volume create mysql-data
+
+(3) Inspect a docker volume
+- docker volume inspect mysql-data
+
+(4) Remove a docker volume
+- docker volume rm mysql-data
+
+(5) Remove unused volumes
+- docker volume prune
+
+
+***************************************************************************************************
+🌼 Named Volume:- Docker manages the storage location
+Example:
+  -v mysql-data:/var/lib/mysql
+
+- mysql-data = Docker volume name
+- /var/lib/mysql = MySQL's data directory
+
+
+***************************************************************************************************
+🌼 Bind Mount:- We create a folder on the host machine and use that folder for storing data
+
+(1) Create folder
+- mkdir -p /home/ubuntu/volumes/mysql
+
+(2) Run MySQL using Bind Mount
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means: -v /home/ubuntu/volumes/mysql:/var/lib/mysql
+Host folder → MySQL's data directory
+
+/home/ubuntu/volumes/mysql = Host folder
+/var/lib/mysql = MySQL container data directory
+Myfolder: /home/ubuntu/DevOps_FullCourse/04_Docker/03_Docker-Volume_and_Storage/volumes/mysql
+
+
+****************************************************************************************************
+🌼 Complete Two-Tier Flask + MySQL Docker Setup
+
+(1) Create Network
+- docker network create two-tier
+
+(2) Create MySQL volume
+For Named Volume:
+- docker volume create mysql-data
+
+For Bind Mount:
+- mkdir -p /home/ubuntu/volumes/mysql
+
+
+(3) Create MySQL container
+Using Named Volume:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v mysql-data:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means: -v mysql-data:/var/lib/mysql
+Docker volume → MySQL's data directory
+
+
+Using Bind Mount:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+Note:
+This means:
+-v /home/ubuntu/volumes/mysql:/var/lib/mysql
+
+Host folder → MySQL's data directory
+
+
+(4) Create Flask container
+
+docker run -d \
+  --name flask-container \
+  -p 5000:5000 \
+  --network two-tier \
+  -e MYSQL_HOST=mysql-container \
+  -e MYSQL_USER=root \
+  -e MYSQL_PASSWORD=root \
+  -e MYSQL_DB=devops \
+  flask-app
+
+
+        Your architecture should be
+
+            two-tier network
+                 │
+    ┌────────────┴────────────┐
+    │                         │
+Flask Container           MySQL Container
+    │                         │
+    │                    /var/lib/mysql
+    │                         │
+    │              ┌──────────┴──────────┐
+    │              │                     │
+    │        Named Volume           Bind Mount
+    │              │                     │
+    │        mysql-data       /home/ubuntu/volumes/mysql
+    │              │                     │
+    └──────────────┴──── network ────────┘
+
+
+(5) Then: Enter some data at UI part.
+
+Example:
+  hello
+  namaste
+  xyz
+
+
+(6) Delete mysql-container, and run again using same storage
+
+For Named Volume:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v mysql-data:/var/lib/mysql \
+  mysql:latest
+
+
+For Bind Mount:
+
+docker run -d \
+  --name mysql-container \
+  -p 3306:3306 \
+  --network two-tier \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=devops \
+  -v /home/ubuntu/volumes/mysql:/var/lib/mysql \
+  mysql:latest
+
+
+==================================================================================================
+
+🌼 How to See Where Docker Volume Data Is Stored
+
+(i) List Docker Volumes
+- docker volume ls
+
+output:
+mysql-data
+
+
+(ii) Inspect the Docker Volume
+- docker volume inspect mysql-data
+
+You will see information similar to:
+
+[
+    {
+        "CreatedAt": "...",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/mysql-data/_data",
+        "Name": "mysql-data"
+    }
+]
+
+- Mountpoint: /var/lib/docker/volumes/mysql-data/_data
+
+This is the actual location of the volume data on the Docker host
+
+
+(iii) Switch to Root User
+- sudo su
+
+
+(iv) Navigate to the Volume Directory
+- cd /var/lib/docker/volumes/mysql-data/_data
+
+
+(v) List the Stored Data
+- ls
+
+
+(vi) You will see MySQL's stored files and directories.
+
+- For example:
+  auto.cnf
+  binlog.000001
+  ibdata1
+  ib_logfile0
+  mysql
+  performance_schema
+  sys
+  devops
+
+
+# Key concept
+
+ Docker Volume Name
+       ↓
+   mysql-data
+       ↓
+ Docker Mountpoint
+       ↓
+  /var/lib/docker/volumes/mysql-data/_data
+       ↓
+ Persistent MySQL data
+
+
+====================================================================================================
+
+🌼 How to See Bind Mount Data
+
+(i) Navigate to the Host Folder
+- cd /home/ubuntu/volumes/mysql
+
+
+(ii) List the Stored Data
+- ls
+
+You will see MySQL's stored files and directories.
+
+
+# Key concept
+
+ Host Folder
+       ↓
+ /home/ubuntu/volumes/mysql
+       ↓
+ Bind Mount
+       ↓
+ /var/lib/mysql
+       ↓
+ Persistent MySQL data
+
+
+====================================================================================================
+
+(7) Connect to MySQL Container
+
+(a) Enter the MySQL container
+- docker exec -it mysql-container bash
+
+(b) Then connect to MySQL
+- mysql -u root -p
+
+(c) Enter the password
+- root
+
+
+(8) Check the Database
+(a) Inside MySQL
+- SHOW DATABASES;
+
+You should see: devops
+
+(b) Select the database
+- USE devops;
+
+(c) Check the data:
+- SELECT * FROM messages;
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣 DAY-4 DOCKER COMPOSE
+=================================================================================================================================================
+
+🌸 WHAT IS DOCKER COMPOSE?
+-->  Docker Compose = Manage multiple containers using one file.
+
+# Instead of running multiple `docker run` commands, we define the configuration in one file.
+-->  docker-compose.yml or
+-->  docker-compose.yaml
+
+# Then start everything with
+-->  docker compose up
+
+=====================================================================================================
+🌸 BASIC DOCKER COMPOSE FILE
+=====================================================================================================
+# Example
+
+   services:
+
+      mysql:
+        image: mysql:9.7
+
+      flask-app:
+        build: .
+
+=====================================================================================================
+🌸 IMPORTANT OPTIONS
+=====================================================================================================
+(1) services
+-->  Defines the containers/services
+
+(2) image
+-->  Specifies an existing Docker image
+ 
+     image: mysql:9.7
+
+(3) build
+-->  Builds an image using a Dockerfile
+
+     build: .
+
+(4) ports
+-->  Maps Host Port : Container Port
+
+     ports:
+       - "5000:5000"
+
+(5) environment
+-->  Passes environment variables to the container
+
+     environment:
+       MYSQL_ROOT_PASSWORD: root
+
+(6) depends_on
+-->  Controls the startup order of services.
+
+     depends_on:
+       - mysql
+
+(7) volumes
+-->  Used to persist data, especially MySQL data.
+
+     volumes:
+       - mysql-data:/var/lib/mysql
+
+(8) networks
+-->  Connects services to a specific Docker network
+
+     networks:
+       - two-tier
+
+(9) healthcheck
+-->  Checks whether a container/service is healthy
+
+     healthcheck:
+       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+
+(10) restart
+-->  Defines when Docker should automatically restart a container
+
+     restart: always
+
+=====================================================================================================
+🌸 FLASK + MYSQL DOCKER COMPOSE
+=====================================================================================================
+docker-compose.yml
+
+    mysql:
+      image: mysql:9.7  (don't use latest for best pratice, always mention version)
+      container_name: mysql-container
+
+      ports:
+        - "3606:3606"
+
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: devops
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: admin
+
+      volumes:
+        - mysql-data:/var/lib/mysql
+
+        # Instead of keeping MySQL's data only inside the container, store it on my Ubuntu machine at 
+        - /home/ubuntu/volumes/mysql:/var/lib/mysql
+
+      networks:
+        - two-tier
+
+      restart: always
+
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 60s
+
+   flask-app:
+     build:
+       context: .
+
+     container_name: flask-container
+
+     ports:
+       - "5000:5000"
+
+     environment:
+       MYSQL_HOST: mysql
+       MYSQL_USER: root
+       MYSQL_PASSWORD: root
+       MYSQL_DB: devops
+
+     depends_on:
+        mysql:
+           condition: service_healthy
+
+     networks:
+       - two-tier
+
+     restart: always
+
+     healthcheck:
+       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+       start_period: 30s
+
+
+networks:
+  two-tier:
+
+volumes:
+  mysql-data:
+
+
+====================================================================================================
+🌸 IMPORTANT: MYSQL_HOST
+====================================================================================================
+Here:
+# MYSQL_HOST: mysql 
+-->  `mysql` is the MySQL service name not mysql-container name:
+
+     services:
+          mysql:
+
+          flask-app:
+
+====================================================================================================
+🌸 IMPORTANT DOCKER COMPOSE COMMANDS
+====================================================================================================
+(1) Start containers:
+-  docker compose up
+
+(2) Start in background:
+-  docker compose up -d
+
+(3) Build and start:
+-  docker compose up --build
+
+(4) Check containers:
+-  docker compose ps
+-  docker compose ps -a
+
+(5) View logs:
+-  docker compose logs
+
+(6) View logs continuously:
+-  docker compose logs -f
+
+(7) Stop containers:
+-  docker compose stop
+
+(8) Stop & remove containers:
+-  docker compose down
+
+(9) Restart containers:
+-  docker compose restart
+
+(10) Enter a container:
+-  docker compose exec -it mysql bash
+
+Here:- mysql is service_Name not conatiner_Name 
+
+====================================================================================================
+🌸 CHECK MYSQL
+====================================================================================================
+# Enter MySQL:
+-  docker compose exec  -it mysql mysql -u root -p
+
+# Then Enter
+-  SHOW DATABASES;
+-  USE devops;
+-  SHOW TABLES;
+-  SELECT * FROM messages;
+
+====================================================================================================
+🌸 COMMON CHECKS
+====================================================================================================
+(1) Check containers:
+-  docker compose ps
+
+(2) Check Flask logs:
+-  docker compose logs flask-app
+
+(3) Check MySQL logs:
+-  docker compose logs mysql
+
+(4) Check Docker networks:
+-  docker network ls
+
+(5) Check Docker Volumes:
+-  docker volume ls
+
+(6)Check listening TCP ports on EC2:
+-   sudo ss -ltnp
+
+====================================================================================================
+🌸 IMPORTANT CONCEPT
+====================================================================================================
+# Without Compose:
+   docker network create
+   docker volume create
+   docker run mysql
+   docker run flask
+
+# With Compose:
+   docker compose up -d
+
+# Everything is defined inside:
+   docker-compose.yml
+
+# Key concept:
+
+    Flask
+      |
+      | MYSQL_HOST=mysql
+      v
+    MySQL
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣  DAY-5 Docker Registry
+=================================================================================================================================================
+🌸 Docker Registry
+
+Step.1 Login in to your Docker account from the terminal
+--> docker login
+
+
+Setp.2 You may see
+--> Athenticating with existing credentials... [Username: ankittripathidocker]
+--> This confirms that Docker is using your existing Docker Hub credentials.
+
+
+Setp.3 Check Existing Docker Images
+--> docker images
+
+# Example
+--> two-tier-flask-app-flask-app:latest
+
+  two-tier-flask-app-flask-app
+  │ │
+  │ └── Tag
+  └───────────────────────────── Image name
+
+
+Step.4 Tag the Image for Docker Hub
+# To push an image to Docker Hub, give it a Docker Hub-compatible name
+
+-->  docker image tag two-tier-flask-app-flask-app  ankittripathidocker/two-tier-backend
+
+# Image naming format
+-->  <docker-username>/<repository-name>:<tag>
+
+# Example
+
+  ankittripathidocker/two-tier-backend
+  │ │ │
+  │ │ └── Tag
+  │ └──────────────────── Repository name
+  └────────────────────────────────────── Docker Hub username
+
+# What changed?
+-->  Old/local image:  two-tier-flask-app-flask-app:latest
+
+-->  New Docker Hub tag: ankittripathidocker/two-tier-backend:latest
+
+# IMPORTANT
+-->  docker image tag does not create a second copy of the image's data. It creates another tag/reference pointing to the same image.
+
+# Verify the New Image Tag
+-->  docker images
+
+# Output
+-->  ankittripathidocker/two-tier-backend:latest
+-->  two-tier-flask-app-flask-app:latest
+
+# The important image is
+-->  ankittripathidocker/two-tier-backend
+
+
+Step.5 Push the Image to Docker Hub
+-->  docker push ankittripathidocker/two-tier-backend:latest
+
+-->  Docker will upload the image layers to your Docker Hub repository.
+
+
+Step.6 Check the Image on Docker Hub
+# Open your Docker Hub repositories:
+-->  https://hub.docker.com/repositories/ankittripathidocker
+
+# You should find the repository:
+-->  two-tier-backend
+
+## with the tag:
+-->  latest
+
+
+Step.7 Pull the Image from Docker Hub
+# Once the image is available on Docker Hub, you can download it to another machine.
+-->  docker pull ankittripathidocker/two-tier-backend
+
+
+--> This is useful when deploying the application on another server or EC2 instance.
+--> You do not need to build the image locally if the required image already exists in Docker Hub.
+--> Using the Docker Hub Image in Docker Compose
+
+
+# Previously, the docker-compose.yml may build the Flask application locally:
+
+  flask-app:
+        build:
+         context: .
+
+--> Here, Docker Compose builds the image using the local Dockerfile and application source code.
+
+# Instead, you can use the image that has already been pushed to Docker Hub:
+
+   flask-app:
+       image: ankittripathidocker/two-tier-backend:latest
+
+# BEFORE:
+
+    flask-app:
+         build:
+           context: .
+
+# AFTER:
+ 
+     flask-app:
+         image: ankittripathidocker/two-tier-backend:latest
+
+
+--> Now Docker Compose can pull the image from Docker Hub instead of building it locally.
+
+
+
+🌸 Important Commands
+(1) Login
+--> docker login
+
+(2) Check images
+--> docker images
+
+(3) Tag an image
+--> docker image tag OLD_IMAGE USERNAME/REPOSITORY
+
+# Example:
+--> docker image tag two-tier-flask-app-flask-app:latest   ankittripathidocker/two-tier-backend:latest
+
+(4) Push image
+--> docker push ankittripathidocker/two-tier-backend:latest
+
+(5) Pull image
+--> docker pull ankittripathidocker/two-tier-backend:latest
+
+(6) Run Compose using the Docker Hub Image
+--> docker compose up -d
+
+
+🌸  KEY CONCEPT
+--> The main idea of a Docker Registry is that you don't have to build your Docker image on every machine.
+--> You can:
+  - Build the image once.
+  - Tag it with your Docker Hub username and repository.
+  - Push it to Docker Hub.
+  - Pull it from any machine.
+  - Use that image directly in Docker Compose.
+
+--> This is especially useful for CI/CD and deployment because the server can pull a pre-built image rather than rebuilding the application every time.
+
+*************************************************************************************************************************************************
+
+=================================================================================================================================================
+🧣  DAY-6 Multi-Stage Docker Builds 
+=================================================================================================================================================
+🌸 Multi-Stage Build
+--> Uses multiple FROM statements to separate build and production stages.
+
+    Builder Stage
+       ↓
+    Install / Build
+       ↓
+    Copy required files
+       ↓
+    Final Stage
+       ↓
+    Smaller image
+
+# Benefits:
+--> Smaller image
+--> Better security
+--> Faster deployment
+--> Useful for CI/CD
+
+
+================================================================================
+🌸  Single-Stage vs Multi-Stage
+
+## Single-Stage
+
+  FROM python:3.14
+  WORKDIR /app
+  COPY requirements.txt .
+  RUN pip install -r requirements.txt
+  COPY . .
+  EXPOSE 80
+  CMD ["python", "run.py"]
+
+
+## Multi-Stage
+  =================
+  # Builder Stage
+  =================
+  FROM python:3.14 AS builder
+  WORKDIR /app
+  COPY requirements.txt .
+  RUN pip install --no-cache-dir -r requirements.txt --target=/app/deps
+  COPY . .
+
+
+  ==================
+  # Production Stage
+  ==================
+  FROM python:3.14-slim
+  WORKDIR /app
+  COPY --from=builder /app/deps /app/deps
+  ENV PYTHONPATH=/app/deps
+  COPY . .
+  EXPOSE 80
+  CMD ["python", "run.py"]
+
+================================================================================
+🌸  Important Multi-Stage Commands
+
+ (i) FROM python:3.14 AS builder
+ -->  Creates and names the builder stage.
+
+ (ii) RUN pip install --target=/app/deps
+ -->  Installs dependencies into /app/deps.
+
+ (iii) COPY --from=builder /app/deps /app/deps
+ -->  Copies dependencies from builder to final stage.
+  
+ (iv) ENV PYTHONPATH=/app/deps
+ --> Tells Python where to find the dependencies.
+
+================================================================================
+🌸  Dockerfile-multi
+
+ ## Build:
+ --> docker build -f Dockerfile-multi -t flask-app:multi .
+
+ ## Run:
+ --> docker run -d --name flask-app -p 80:80 flask-app:multi
+
+=================================================================================
+
+*************************************************************************************************************************************************
+=================================================================================================================================================
+🧣  DAY-07 Monitoring & Logging In Docker 
+=================================================================================================================================================
+## 🌸 Docker Monitoring — Logs & Attach
+
+🎯 (1) Check Container Logs
+-->  docker logs containerName
+-->  View logs generated by a container
+
+## Example
+-->  docker logs flask-app
+
+## Notes
+-->  Use `docker logs` when you only want to view the container's application output and errors
+
+==============================================================================================
+
+🎯 (2) Attach to a Running Container
+-->  docker attach containerName
+-->  Connect your terminal to the container's main process
+
+
+## Example
+-->  docker attach flask-app
+
+=============================================================================================
+
+🎯 (3) Attach Using `nohup`
+-->  nohup docker attach conatinerName &
+-->  Run `docker attach` in the background
+
+## Example
+-->  nohup docker attach flask-app &
+
+## Meaning
+🔹 nohup -->  Keeps the command running even if the terminal closes
+🔹 docker attach -->  Attaches to the container's main process
+🔹 & -->  Runs the command in the background
+
+=============================================================================================
+
+🎯 (4) Difference
+
+(i) docker logs
+--> View container logs
+
+(ii) docker attach
+-->  Connect to the container's main process
+
+(iii) nohup docker attach ... &
+-->  Attach in the background
+
+
+(iv) For normal log monitoring, prefer
+--> docker logs flask-app
+
+*********************************************************************************************************************************************
+==============================================================================================================================================

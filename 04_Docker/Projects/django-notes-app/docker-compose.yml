@@ -1,0 +1,74 @@
+services:
+
+  # ===== DJANGO BACKEND ===== #
+  django_app:
+    build:
+      context: .
+    image: django_app
+    container_name: django_container
+    # Run Django when the container starts
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+           gunicorn notesapp.wsgi:application --bind 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    env_file:
+      - ".env" 
+    depends_on:
+      -  mysql_db
+    networks:
+      - notes-app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
+
+  # ===== Nginx Reverse Proxy ===== #
+  nginx:
+    build:
+      context: ./nginx
+    image: nginx
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    depends_on:
+      - django_app
+    networks:
+      - notes-app
+    restart: unless-stopped
+
+
+  # ====== MYSQL DATABASE ===== #
+  mysql_db:
+    image: mysql
+    container_name: mysql-container
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+    volumes:
+      #- mysql-data:/var/lib/mysql
+      - ./data/mysql/db:/var/lib/mysql    # MySQL data stored in project folder
+    networks:
+      - notes-app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+
+
+# volumes:
+  # mysql-data:  
+
+networks:
+  notes-app:

@@ -1,8 +1,6 @@
 services:
 
-  #------------------#
-  #  MYSQL DATABASE
-  #------------------#
+  # ====== MYSQL DATABASE ===== #
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -24,13 +22,12 @@ services:
       start_period: 30s
 
 
-  #---------------------------#
-  #  Spring Boot application
-  #---------------------------#
-  java-app:
+
+  # ====== SPRING BOOT APPLICATION ===== #
+  java_app:
     build: .
     image: expenses-tracker
-    container_name: expensesapp-container
+    container_name: ExpensesTrackerApp-container
     ports:
       - "8080:8080"
     environment:
@@ -42,6 +39,23 @@ services:
     depends_on:
       - mysql
     restart: unless-stopped
+
+
+
+  # ===== Nginx Reverse Proxy ===== #
+  nginx:
+    build:
+      context: ./nginx
+    image: nginx
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    depends_on:
+      - java_app
+    networks:
+      - expenses-app-network
+    restart: unless-stopped
+
 
 
 # Network for communication between containers

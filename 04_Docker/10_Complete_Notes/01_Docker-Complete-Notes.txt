@@ -1397,4 +1397,91 @@ Scan again
 ===============================================================================================================================================
 🧣  DAY-09 Docker-CLI
 ===============================================================================================================================================
-🎯
+🎯  Docker Init
+--> docker init helps create basic Docker files for an existing project.
+
+🌸 For a Node.js project, it can create:
+
+   Dockerfile
+   .dockerignore
+   compose.yaml
+   README.Docker.md
+
+
+🌸 In Docker Desktop Check:
+--> docker init
+--> docker init --help
+
+
+🌸 Go inside your project:
+--> cd example
+
+🌸 Run:
+--> docker init
+
+
+--> Answer the questions according to your application.
+
+
+🌸 Example
+# Suppose my project already has:
+
+   node-cicd/
+   ├── app.js
+   ├── package.json
+   ├── package-lock.json
+   ├── Dockerfile
+   ├── compose.yaml
+   └── README.md
+
+
+🌸 If I want to recreate the Docker files using docker init:
+(i)  Go to the project
+-->  cd example
+
+
+(ii) Delete existing Docker files
+---> rm -f Dockerfile compose.yaml .dockerignore README.Docker.md
+
+
+(iii) Run Docker Init
+--->  docker init
+
+
+(iv) Check the generated files
+---> ls -la
+
+
+🌸 Docker Init will generate files such as:
+
+   Dockerfile
+   .dockerignore
+   compose.yaml
+   README.Docker.md
+
+
+(v) Build and run
+--> docker compose up -d --build
+
+
+(vi) Check the container
+---> docker ps
+
+
+(vii) Stop the application
+--->  docker compose down
+
+
+🌸  Ubuntu Server
+--> Normal Docker Engine on Ubuntu Server may not include docker init.
+
+# You may get:
+--> docker: unknown command: docker init
+
+--> For learning Docker Init, use Docker Desktop to generate the Docker files
+
+
+**********************************************************************************************************************************************
+==============================================================================================================================================
+                                                     COMPLETE DOCKER NOTES
+==============================================================================================================================================

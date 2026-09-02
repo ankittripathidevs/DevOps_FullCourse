@@ -18,3 +18,4 @@ EXPOSE 80
 
 # (7) Run the application when the container starts
 CMD ["python", "run.py"]
+

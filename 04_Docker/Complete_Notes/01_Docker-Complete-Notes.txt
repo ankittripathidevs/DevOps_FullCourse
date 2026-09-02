@@ -1269,5 +1269,132 @@ Step.7 Pull the Image from Docker Hub
 (iv) For normal log monitoring, prefer
 --> docker logs flask-app
 
-*********************************************************************************************************************************************
-==============================================================================================================================================
+
+***********************************************************************************************************************************************
+===============================================================================================================================================
+🧣  DAY-08 Docker-Scout
+===============================================================================================================================================
+🎯  Docker Scout
+--> Docker Scout is used to scan Docker images for security vulnerabilities (CVEs).
+--> It helps us check whether the packages inside our Docker image have known security issues.
+
+
+🎯 1. docker Scout with Docker Desktop
+   ===================================
+--> Docker Scout CLI is already available with Docker Desktop.
+
+(i) Check Docker Scout
+--> docker scout version
+
+(ii) Check Docker Images
+--> docker images
+
+##  My Docker Hub image
+--> ankittripathidocker/two-tier-backend:latest
+
+(iii) Scan the Image
+-->  docker scout quickview ankittripathidocker/two-tier-backend:latest
+
+(iv) Check Vulnerabilities
+--> docker scout cves ankittripathidocker/two-tier-backend:latest
+
+(v) Check Recommendations
+--> docker scout recommendations ankittripathidocker/two-tier-backend:latest
+
+
+🎯 2. Docker Scout on Ubuntu Server
+   ================================
+--> Ubuntu uses Docker Engine, so Docker Scout needs to be installed separately.
+
+(i) Check Docker Scout
+--> docker scout version
+
+
+## If Scout is not installed:
+
+(ii) Install Docker Scout
+--> curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+--> sh install-scout.sh
+
+(iii) Verify
+--> docker scout version
+
+
+## My Ubuntu server project:
+--> node-cicd
+
+
+🎯 3. Scan node-cicd Docker Image
+   ==============================
+
+(i) First check the images
+--> docker images
+
+(ii) Find the image name created by the node-cicd project, Then run:
+--> docker scout quickview IMAGE_NAME
+
+(iii) For detailed vulnerabilities:
+--> docker scout cves IMAGE_NAME
+
+(iv) For recommendations:
+--> docker scout recommendations IMAGE_NAME
+
+
+🎯 4. Important Docker Scout Commands
+   ==================================
+
+(i) docker scout version
+--> Check Scout installation
+
+(ii) docker scout quickview IMAGE
+---> Quick security scan
+
+(iii) docker scout cves IMAGE
+---> Check vulnerabilities
+
+(iv) docker scout recommendations IMAGE
+---> Check recommendations
+
+
+🎯 5. Basic Workflow
+   =================
+
+Docker Image
+|
+v
+docker scout quickview IMAGE
+|
+v
+docker scout cves IMAGE
+|
+v
+Check vulnerabilities
+|
+v
+Fix Dockerfile/dependencies
+|
+v
+Build image again
+|
+v
+Scan again
+
+
+🎯 Docker Desktop Image
+--> docker scout quickview ankittripathidocker/two-tier-backend:latest
+--> docker scout cves ankittripathidocker/two-tier-backend:latest
+--> docker scout recommendations ankittripathidocker/two-tier-backend:latest
+
+
+🎯 Ubuntu node-cicd
+--> docker images
+--> docker scout quickview IMAGE_NAME
+--> docker scout cves IMAGE_NAME
+--> docker scout recommendations IMAGE_NAME
+
+
+***********************************************************************************************************************************************
+===============================================================================================================================================
+🧣  DAY-09 Docker-CLI
+===============================================================================================================================================
+🎯

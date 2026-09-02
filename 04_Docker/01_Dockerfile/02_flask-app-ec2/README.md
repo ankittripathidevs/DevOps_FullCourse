@@ -1,104 +1,106 @@
-# Flask App — AWS ECS Deployment
+# Flask App — Docker on AWS EC2
 
-A minimal Flask web application built for learning containerization and deployment to **AWS ECS (Elastic Container Service)**.
+A minimal **Flask web application** containerized with Docker and deployed on an **AWS EC2 instance**.
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.1.1-green)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
-![AWS ECS](https://img.shields.io/badge/AWS-ECS-FF9900)
+![AWS EC2](https://img.shields.io/badge/AWS-EC2-FF9900)
 
 ## Features
 
-- Responsive landing page with modern glassmorphism UI
-- `/health` endpoint for ECS load balancer health checks
-- Two Dockerfiles — simple and multistage (distroless)
+* Simple Flask web application
+* Dockerized using a single `Dockerfile`
+* `/health` endpoint for health checks
+* Runs on EC2 port `80`
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Flask 3.1.1 |
-| Runtime   | Python 3.14 |
-| Container | Docker (python-slim / distroless) |
-| Deploy    | AWS ECS |
+| Component  | Technology  |
+| ---------- | ----------- |
+| Framework  | Flask 3.1.1 |
+| Runtime    | Python 3.14 |
+| Container  | Docker      |
+| Deployment | AWS EC2     |
 
 ## Project Structure
 
-```
-flask-app-ecs/
-├── app.py                 # Flask app with routes
-├── run.py                 # Entry point (host 0.0.0.0, port 80)
-├── requirements.txt       # Python dependencies
+```text
+flask-app-ec2/
+├── app.py
+├── run.py
+├── requirements.txt
 ├── templates/
-│   └── index.html         # Landing page
-├── Dockerfile             # Simple single-stage build
-└── Dockerfile-multi       # Multistage build with distroless
+│   └── index.html
+└── Dockerfile
 ```
 
-## Quick Start
-
-### Run locally
+## Run Locally
 
 ```bash
 pip install -r requirements.txt
 python run.py
 ```
 
-App runs at **http://localhost:80**.
+Open:
 
-### Run with Docker
+```text
+http://localhost:80
+```
 
-**Simple build:**
+## Run with Docker
+
+### Build Image
 
 ```bash
 docker build -t flask-app .
-docker run -p 80:80 flask-app
 ```
 
-**Multistage build (smaller, production-grade):**
+### Run Container
 
 ```bash
-docker build -f Dockerfile-multi -t flask-app .
-docker run -p 80:80 flask-app
+docker run -d -p 80:80 --name flask-app flask-app
 ```
 
-## Dockerfiles Explained
+Check:
 
-### Simple (`Dockerfile`)
-
-Single-stage build using `python:3.14-slim`. Straightforward — copies everything, installs dependencies, runs the app. Good for development and learning.
-
-### Multistage (`Dockerfile-multi`)
-
-Two-stage build:
-1. **Builder stage** — installs dependencies into a separate directory using `python:3.14-slim`
-2. **Final stage** — copies only the app and deps into a `distroless` image
-
-Benefits:
-- Smaller final image (no pip, no shell, no OS utilities)
-- Reduced attack surface — distroless images contain only the app and its runtime
-- Better layer caching — dependencies are copied before source code
+```bash
+docker ps
+```
 
 ## Endpoints
 
-| Route     | Method | Description                     |
-|-----------|--------|---------------------------------|
-| `/`       | GET    | Landing page                    |
-| `/health` | GET    | Health check (returns `Server is up and running`) |
+| Route     | Description              |
+| --------- | ------------------------ |
+| `/`       | Flask landing page       |
+| `/health` | Application health check |
 
-## Deploy to AWS ECS
+## AWS EC2 Deployment
 
-High-level steps to deploy this app on ECS:
+After installing Docker on the EC2 instance:
 
-1. **Push image to ECR**
-   ```bash
-   aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
-   docker tag flask-app:latest <account-id>.dkr.ecr.<region>.amazonaws.com/flask-app:latest
-   docker push <account-id>.dkr.ecr.<region>.amazonaws.com/flask-app:latest
-   ```
+```bash
+docker build -t flask-app .
+docker run -d -p 80:80 --name flask-app flask-app
+```
 
-2. **Create ECS Task Definition** — specify the ECR image, port 80, memory/CPU limits
+Make sure **port 80** is allowed in the EC2 Security Group.
 
-3. **Create ECS Service** — attach to a cluster, configure desired count, link to a load balancer
+### Access the Application
 
-4. **Configure ALB** — target group pointing to port 80, use `/health` as the health check path
+```text
+http://<EC2-PUBLIC-IP>:80
+```
+
+### Health Check
+
+```text
+http://<EC2-PUBLIC-IP>:80/health
+```
+
+Expected response:
+
+```text
+Server is up and running
+```
+

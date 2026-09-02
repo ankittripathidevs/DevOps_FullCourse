@@ -1,20 +1,72 @@
-# Nodejs docker test
-- simple hello program using node
+# Node.js App — Docker
 
-# How to Run 
+A simple **Node.js application** containerized using Docker with the official Node.js Alpine image.
+
+## Tech Stack
+
+* Node.js 22
+* Node.js Alpine
+* Docker
+
+## Project Structure
+
+```text
+03_node-app/
+├── Dockerfile
+├── README.md
+├── package.json
+├── package-lock.json
+└── server.js
+```
+
+## Dockerfile
+
+The Dockerfile:
+
+1. Uses **Node.js 22 Alpine**
+2. Sets `/app` as the working directory
+3. Copies package files and installs dependencies
+4. Copies the application code
+5. Exposes port `3000`
+6. Starts the app with `node server.js`
+
+## Build Image
+
 ```bash
-# Install node paclage manager
-npm i
+docker build -t node-app .
+```
 
-# Build the Docker Image
-docker build -t hello-node .
+## Run Container
 
-# Run the Container
-docker run -p 3000:3000 hello-node
+```bash
+docker run -d -p 3000:3000 --name node-container node-app
+```
 
-# Open browser
+## Access App
+
+### Local
+
+```text
 http://localhost:3000
 ```
 
-# Instructor 
-- trainwithsubham
+### AWS EC2
+
+```text
+http://<EC2-PUBLIC-IP>:3000
+```
+
+> Make sure port **3000** is allowed in the EC2 Security Group.
+
+## Check Container
+
+```bash
+docker ps
+```
+
+## Stop & Remove Container
+
+```bash
+docker rm -f node-container
+```
+

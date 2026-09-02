@@ -41,7 +41,6 @@
  
 4. Build an image from a Dockerfile
 - docker build -t <image_name>:<version> .            // version is optional 
-- docker build -t <image_name>:<version> . -no-cache  // build without cache 
 
 
 #### 🐳  Docker Conatiner
@@ -153,16 +152,16 @@ Example : -p 8080:3306
 
 *********************************************************************************************************
 🎯 mysql
---> docker exec -it Conatiner_Name/Id /bin/bash :- This open a terminal inside a running Docker container.
+--> docker exec -it Conatiner_Name/Id /bin/bash:- This open a terminal inside a running Docker container.
 
 Let’s break it down:
-(1) docker exec :- Run a command inside an already running container
-(2) -i :- Interactive mode Keeps the session open so you can type commands
-(3) -t :- Allocates a TTY (terminal screen)
+(1) docker exec:- Run a command inside an already running container
+(2) -i:- Interactive mode Keeps the session open so you can type commands
+(3) -t:- Allocates a TTY (terminal screen)
 (4) -it:- Allows you to use the container’s shell normally
-(5) Container_Name :- The ID or name of the running container
+(5) Container_Name:- The ID or name of the running container
     Example:- 4d56c24da4f or mysql-container
-(6) /bin/bash :- This tells Docker, Open a Bash shell inside the container
+(6) /bin/bash:- This tells Docker, Open a Bash shell inside the container
 (7) Some containers don’t have bash → then you use /bin/sh :- docker exec -it Container_Name /bin/sh
 
 ******************************************************************************
@@ -170,11 +169,11 @@ Let’s break it down:
 --> We are using ankit-db database but not present in our local machine.
 --> We are using mangodb database (Esme hm setup krege with the help of container)
 
---> Actually hamare Nodejs application ko mangodb data base chaiye tha but hm usko apne local machine pe setup nhi krenge.
---> Hm mangodb ko setup krenge using docker container.
+--> Actually hamare Nodejs application ko mongodb data base chaiye tha but hm usko apne local machine pe setup nhi krenge.
+--> Hm mongodb ko setup krenge using docker container.
 --> Container ke ander he appication intract kr ke data store krwaegi aur fetch kregi.
---> mango 
---> mango-express
+--> mongo 
+--> mongo-express
 
 ************************************************************************************************************
 🎯 Docker Network
@@ -253,7 +252,7 @@ fileName.yaml → Example: mongodb.yaml, app.yaml
 (2) docker compose down	      Stop all services
 (3) docker compose ps	      List running services
 (4) docker compose logs	      Show logs
-(5) docker compose restar     Restart all services
+(5) docker compose restart    Restart all services
 (6) docker compose pull	      Update images
 
 *******************************************************************************************************
@@ -270,6 +269,7 @@ fileName.yaml → Example: mongodb.yaml, app.yaml
       environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: qwerty
+
 
     mongo-express:
      image: mongo-express
@@ -310,6 +310,7 @@ FROM node
 WORKDIR /dockerizing-node-app
 
 COPY package*.json .
+
 RUN npm install
 
 COPY . .

@@ -1,21 +1,21 @@
-# Node Base Image
+# (1) Node Base Image
 FROM node:22-alpine
 
-#Working Directry
+# (2) Set Working Directory 
 WORKDIR /app
 
-#Install packages 
+# (3) Install packages 
 COPY package*.json ./
 
-#Copy the Code
+# (4) Copy the Code
 COPY . .
 
-#Install the dependecies
+# (5) Install the dependecies
 RUN npm install
 RUN npm run test
 
-# Expose application at port 
+# (6) Expose application at port 
 EXPOSE 8000
 
-#Run the code
+# (7) Run the code
 CMD ["node","app.js"]

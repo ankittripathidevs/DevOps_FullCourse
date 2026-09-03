@@ -1,5 +1,7 @@
 # 🐳 Node.js + MongoDB + Mongo Express
 
+A simple Dockerized Node.js application connected to MongoDB using a custom Docker network and a **Bind Mount** for MongoDB data persistence.
+
 ## 1. 🌐 Create Network
 
 ```bash
@@ -35,7 +37,7 @@ docker ps
 
 ---
 
-## 3. 🍃 Create MongoDB
+## 3. 🍃 Create MongoDB with Bind Mount
 
 ```bash
 docker run -d \
@@ -44,6 +46,7 @@ docker run -d \
   -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=admin \
   -e MONGO_INITDB_ROOT_PASSWORD=qwerty \
+  -v ./mongo-database:/data/db \
   mongo:8.2
 ```
 
@@ -52,6 +55,12 @@ Check:
 ```bash
 docker ps
 docker logs mongo-container
+```
+
+MongoDB data is stored on the host in:
+
+```text
+./mongo-database/
 ```
 
 ---
@@ -75,7 +84,7 @@ db.users.insertOne({
 })
 ```
 
-> `ankit-db` appears in `show databases` only after data is inserted.
+> `ankit-db` appears in `show databases` after data is inserted.
 
 Find users:
 
@@ -116,8 +125,6 @@ API:
 ```text
 POST /addUser
 ```
-
-Example:
 
 ```bash
 curl -X POST http://localhost:5050/addUser \
@@ -189,5 +196,32 @@ EC2 :8081
 Mongo Express
    ↓
 ankit-db → users
+```
+
+## 💾 Data Persistence
+
+MongoDB uses a **Bind Mount**:
+
+```bash
+-v ./mongo-database:/data/db
+```
+
+```text
+Host
+./mongo-database/
+       ↓
+Container
+/data/db
+       ↓
+MongoDB Data
+```
+
+## 📌 .gitignore
+
+Add the MongoDB data directory to `.gitignore`:
+
+```gitignore
+# MongoDB database data (Docker bind mount)
+mongo-database/
 ```
 

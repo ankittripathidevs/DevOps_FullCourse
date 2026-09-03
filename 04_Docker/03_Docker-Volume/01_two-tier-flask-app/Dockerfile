@@ -23,3 +23,4 @@ COPY . .
 
 # (8) Start the Flask application
 CMD ["python", "app.py"]
+

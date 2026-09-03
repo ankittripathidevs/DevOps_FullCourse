@@ -1,21 +1,20 @@
-# Use official Node.js image
-FROM node
+# 1. Use Node.js official Alpine image
+FROM node:22-alpine
 
-# Environment variables
-ENV MONGO_DB_USERNAME=admin \
-    MONGO_DB_PASSWORD=qwerty
+# 2. Set working directory
+WORKDIR /app
 
-# Create app directory
-WORKDIR /dockerizing-node-app
+# 3. Copy package files
+COPY package*.json ./
 
-# Copy project files
-COPY . .
-
-# Install dependencies
+# 4. Install dependencies
 RUN npm install
 
-# Expose application port
+# 5. Copy application code
+COPY . .
+
+# 6. Expose Node.js application port
 EXPOSE 5050
 
-# Start application
+# 7. Start the application
 CMD ["node", "server.js"]

@@ -4,17 +4,20 @@ FROM node:22-alpine
 # 2. Set working directory
 WORKDIR /app
 
-# 3. Copy package files
+# 3. Install curl for Docker container healthcheck
+RUN apk add --no-cache curl
+
+# 4. Copy package files
 COPY package*.json ./
 
-# 4. Install dependencies
+# 5. Install dependencies
 RUN npm install
 
-# 5. Copy application code
+# 6. Copy application code
 COPY . .
 
-# 6. Expose Node.js application port
+# 7. Expose Node.js application port
 EXPOSE 5050
 
-# 7. Start the application
+# 8. Start the application
 CMD ["node", "server.js"]

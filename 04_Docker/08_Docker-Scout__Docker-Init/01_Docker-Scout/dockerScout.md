@@ -25,25 +25,25 @@ docker images
 My Docker Hub image:
 
 ```text
-ankittripathidocker/two-tier-backend:latest
+ankittripathidocker/two-tier-flask:latest
 ```
 
 ### Scan the Image
 
 ```bash
-docker scout quickview ankittripathidocker/two-tier-backend:latest
+docker scout quickview ankittripathidocker/two-tier-flask:latest
 ```
 
 ### Check Vulnerabilities
 
 ```bash
-docker scout cves ankittripathidocker/two-tier-backend:latest
+docker scout cves ankittripathidocker/two-tier-flask:latest
 ```
 
 ### Check Recommendations
 
 ```bash
-docker scout recommendations ankittripathidocker/two-tier-backend:latest
+docker scout recommendations ankittripathidocker/two-tier-flask:latest
 ```
 
 ---
@@ -146,15 +146,15 @@ Scan again
 ### Docker Desktop Image
 
 ```bash
-docker scout quickview ankittripathidocker/two-tier-backend:latest
+docker scout quickview ankittripathidocker/two-tier-flask:latest
 ```
 
 ```bash
-docker scout cves ankittripathidocker/two-tier-backend:latest
+docker scout cves ankittripathidocker/two-tier-flask:latest
 ```
 
 ```bash
-docker scout recommendations ankittripathidocker/two-tier-backend:latest
+docker scout recommendations ankittripathidocker/two-tier-flask:latest
 ```
 
 ### Ubuntu `node-cicd`

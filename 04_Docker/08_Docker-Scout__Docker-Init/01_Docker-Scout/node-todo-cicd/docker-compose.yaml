@@ -1,7 +1,7 @@
-version: '3.9'
-
 services:
-  web:
-    image: trainwithshubham/node-app:latest
+  node-app:
+    image: ankittripathidocker/node-todo-cicd:latest
+    container_name: node-container
     ports:
       - "8000:8000"
+    restart: unless-stopped

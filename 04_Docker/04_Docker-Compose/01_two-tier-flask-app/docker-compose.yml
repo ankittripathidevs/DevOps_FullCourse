@@ -13,8 +13,11 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
-      # Instead of keeping MySQL's data only inside the container, store it on my Ubuntu machine at 
+      # Bind Mount: Store MySQL data in a custom location on Ubuntu
       # - /home/ubuntu/volumes/mysql:/var/lib/mysql
+
+      # Bind Mount: Store MySQL data inside the project directory
+      # - ./mysql-data:/var/lib/mysql
      
     networks:
       - two-tier

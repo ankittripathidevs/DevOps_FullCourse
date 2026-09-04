@@ -12,8 +12,12 @@ services:
       MYSQL_PASSWORD: admin
     volumes:
       - mysql-data:/var/lib/mysql
-      # Instead of keeping MySQL's data only inside the container, store it on my Ubuntu machine at 
+
+      # Bind Mount: Store MySQL data in a custom location on Ubuntu
       # - /home/ubuntu/volumes/mysql:/var/lib/mysql
+
+      # Bind Mount: Store MySQL data inside the project directory
+      # - ./mysql-data:/var/lib/mysql
      
     networks:
       - two-tier
@@ -26,9 +30,8 @@ services:
       start_period: 60s
 
 
-
   flask-app:
-    image: ankittripathidocker/two-tier-backend:latest
+    image: ankittripathidocker/two-tier-flask:latest
     container_name: flask-container
     ports:
       - "5000:5000"

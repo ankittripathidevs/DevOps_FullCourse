@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevOps University</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <main class="page">
+      <!-- Header -->
+      <section class="hero">
+        <div class="badge">🐳 DEVOPS UNIVERSITY</div>
+        <h1>Create your account</h1>
+        <p>
+          Sign up to access important DevOps notes, lectures, and learning
+          resources.
+        </p>
+      </section>
+
+      <!-- Signup Card -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Join the platform</h2>
+            <p>Your account will be saved in MongoDB.</p>
+          </div>
+          <span class="status-dot" title="Node.js API"> </span>
+        </div>
+
+        <!-- Signup Form -->
+        <form id="signupForm">
+          <!-- Email -->
+          <div class="field">
+            <label> Email </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="ankit@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <!-- Username -->
+          <div class="field">
+	   <label> Username </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="ankit"
+              minlength="3"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label> Password </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              minlength="6"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+
+          <!-- Button -->
+          <button type="submit" id="formBtn">
+            <span class="btn-text"> Create Account </span>
+            <span class="spinner" aria-hidden="true"> </span>
+          </button>
+
+          <!-- Message -->
+          <div
+            id="message"
+            class="message"
+            role="alert"
+            aria-live="polite"
+          ></div>
+        </form>
+
+        <!-- Application Flow -->
+        <div class="db-flow">
+          <span>Browser</span>
+          <b>→</b>
+          <span>Node.js :5050</span>
+          <b>→</b>
+          <span>MongoDB</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+

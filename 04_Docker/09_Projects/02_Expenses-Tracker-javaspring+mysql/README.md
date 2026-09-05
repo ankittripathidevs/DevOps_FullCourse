@@ -1,10 +1,3 @@
-![Language](https://img.shields.io/badge/language-Java%20-blue.svg)
-![Technologies](https://img.shields.io/badge/technologies-Spring_boot%20-green.svg)
-![Technologies](https://img.shields.io/badge/technologies-Spring_MVC%20-green.svg)
-![Technologies](https://img.shields.io/badge/technologies-Spring_Security%20-green.svg)
-![Technologies](https://img.shields.io/badge/technologies-Spring_Data_jpa%20-green.svg)
-![Technologies](https://img.shields.io/badge/technologies-Thymeleaf_&_Bootstrap%20-purple.svg)
-
 # Expenses Tracker WebApp
 
 ## Overview
@@ -219,6 +212,237 @@ networks:
 
 ---
 
+# 🔐 Where to Find Database Username, Password and Database Name
+
+When you need to check the **database username, password, or database name used by the Spring Boot application**, first check:
+
+```text
+src/main/resources/application.properties
+```
+
+Inside this file, look for the Spring datasource properties:
+
+```properties
+spring.datasource.url=...
+spring.datasource.username=...
+spring.datasource.password=...
+```
+
+These properties tell you:
+
+```text
+Username → spring.datasource.username
+Password → spring.datasource.password
+Database → database name inside spring.datasource.url
+```
+
+For example:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/expenses_tracker
+spring.datasource.username=root
+spring.datasource.password=Test@123
+```
+
+From this configuration:
+
+```text
+Username : root
+Password : Test@123
+Database : expenses_tracker
+Port     : 3306
+```
+
+> **For Docker Compose:** also check the `environment:` section inside `docker-compose.yml`, because Docker Compose provides the database configuration to the Spring Boot and MySQL containers.
+
+---
+
+# 🐬 How to Enter MySQL Database
+
+First check whether the MySQL container is running:
+
+```bash
+docker ps
+```
+
+The MySQL container name is:
+
+```text
+mysql-container
+```
+
+You can directly enter MySQL using:
+
+```bash
+docker exec -it mysql-container mysql -u root -p
+```
+
+MySQL will ask:
+
+```text
+Enter password:
+```
+
+Enter:
+
+```text
+Test@123
+```
+
+---
+
+## ⚡ Direct Login with Password
+
+You can also provide the password directly:
+
+```bash
+docker exec -it mysql-container mysql -u root -pTest@123
+```
+
+> **Important:** There is **no space** between `-p` and `Test@123`.
+
+Correct:
+
+```bash
+docker exec -it mysql-container mysql -u root -pTest@123
+```
+
+Not:
+
+```bash
+docker exec -it mysql-container mysql -u root -p Test@123
+```
+
+---
+
+# 🗄️ MySQL Commands
+
+After entering MySQL:
+
+### Show Databases
+
+```sql
+SHOW DATABASES;
+```
+
+You should see:
+
+```text
+expenses_tracker
+```
+
+### Select the Database
+
+```sql
+USE expenses_tracker;
+```
+
+### Show Tables
+
+```sql
+SHOW TABLES;
+```
+
+### Check Data
+
+For example:
+
+```sql
+SELECT * FROM users;
+```
+
+or:
+
+```sql
+SELECT * FROM expenses;
+```
+
+Use the actual table names returned by:
+
+```sql
+SHOW TABLES;
+```
+
+### Exit MySQL
+
+```sql
+exit;
+```
+
+---
+
+# 🐳 Enter MySQL Container Shell
+
+You can also enter the MySQL container first:
+
+```bash
+docker exec -it mysql-container bash
+```
+
+Then:
+
+```bash
+mysql -u root -p
+```
+
+Enter:
+
+```text
+Test@123
+```
+
+Then you can run:
+
+```sql
+SHOW DATABASES;
+USE expenses_tracker;
+SHOW TABLES;
+```
+
+Exit MySQL:
+
+```sql
+exit;
+```
+
+Then exit the container:
+
+```bash
+exit
+```
+
+---
+
+# 📌 MySQL Quick Reference
+
+```text
+Container Name : mysql-container
+Username       : root
+Password       : Test@123
+Database       : expenses_tracker
+Port           : 3306
+```
+
+Direct MySQL login:
+
+```bash
+docker exec -it mysql-container mysql -u root -pTest@123
+```
+
+Login with password prompt:
+
+```bash
+docker exec -it mysql-container mysql -u root -p
+```
+
+Enter container:
+
+```bash
+docker exec -it mysql-container bash
+```
+
+---
+
 # Understanding the JDBC URL
 
 The Spring Boot application connects to MySQL using:
@@ -381,7 +605,7 @@ Spring Boot Container
    mysql_db service
         │
         ↓
- MySQL Container
+  MySQL Container
 ```
 
 ## Example of Incorrect Configuration
@@ -660,6 +884,16 @@ Create the `expenses_tracker` database in MySQL and configure the database conne
 ```text
 src/main/resources/application.properties
 ```
+
+Check this file for:
+
+```properties
+spring.datasource.url=...
+spring.datasource.username=...
+spring.datasource.password=...
+```
+
+This is where you can check the **username, password, database name, and database connection URL** used by the Spring Boot application.
 
 ## 2. Build the Application
 

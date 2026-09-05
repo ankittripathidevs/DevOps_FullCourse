@@ -33,4 +33,3 @@ EXPOSE 8000
 
 # Start the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

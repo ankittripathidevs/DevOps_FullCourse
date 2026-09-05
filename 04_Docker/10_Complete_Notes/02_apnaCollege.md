@@ -40,7 +40,7 @@
 - docker image prune  
  
 4. Build an image from a Dockerfile
-- docker build -t <image_name>:<version> .            // version is optional 
+- docker build -t <image_name>:<version> .       // version is optional 
 
 
 #### 🐳  Docker Conatiner
@@ -62,6 +62,7 @@
 
 6. Run container with custom name
 - docker run --name <container_name> <image_name>
+
 
 
 **********************************************************************************************************************
@@ -218,6 +219,8 @@ PS C:\Users\ankit\OneDrive\Desktop\docker-testapp> docker run -d \
 --> localhost: 8081
 --> localhost: 5050/getUsers
 
+
+
 *****************************************************************************************************************
 🎯 Docker Compose
 --> A tool used to run multi-container applications using a single file called docker-compose.yml
@@ -361,7 +364,3 @@ ankittripathidocker/docker-reactapp:- This is your repositries
 Step:6 docker push ankittripathidocker/docker-reactapp
 
 *****************************************************************************
-
-🎯 Docker Volumes
---> Volume are persistent data stores for containers.
-

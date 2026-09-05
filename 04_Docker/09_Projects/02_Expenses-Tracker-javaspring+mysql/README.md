@@ -6,7 +6,7 @@ The Expenses Tracker App is a financial management application developed using *
 
 The application provides user authentication and authorization, allowing users to securely sign up, sign in, and manage their expenses through CRUD operations. Users can also filter their expenses to efficiently organize and analyze their financial data.
 
-The application is containerized using **Docker and Docker Compose**, with separate containers for the Spring Boot application and MySQL database.
+The application is containerized using **Docker and Docker Compose**, with separate containers for the Spring Boot application, MySQL database, and Nginx reverse proxy.
 
 ## Technologies Used
 
@@ -21,6 +21,7 @@ The application is containerized using **Docker and Docker Compose**, with separ
 * Maven
 * Docker
 * Docker Compose
+* Nginx
 
 ## Features
 
@@ -28,8 +29,9 @@ The application is containerized using **Docker and Docker Compose**, with separ
 * **CRUD Operations:** Add, view, update, and delete expenses.
 * **Filtering:** Filter and organize expenses based on available criteria.
 * **MySQL Database:** Store application data in a MySQL database.
-* **Dockerized Application:** Run the Spring Boot application and MySQL database using Docker Compose.
+* **Dockerized Application:** Run the Spring Boot application, MySQL database, and Nginx using Docker Compose.
 * **Persistent Database Storage:** MySQL data is stored using a persistent bind mount.
+* **Nginx Reverse Proxy:** Nginx forwards incoming HTTP requests to the Spring Boot application.
 
 ---
 
@@ -138,17 +140,39 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Docker Compose
 
-Docker Compose is used to run the **Spring Boot application and MySQL database together**.
-
-There are two runtime services:
+Docker Compose is used to run the complete application stack:
 
 ```text
-Spring Boot Application
-        │
-        │ Docker Network
-        ↓
-      MySQL
+                    🌐 Browser
+                        │
+                        │ HTTP :80
+                        ▼
+                ┌────────────────┐
+                │      Nginx     │
+                │ Reverse Proxy  │
+                │      :80       │
+                └───────┬────────┘
+                        │
+                        │ Docker Network
+                        ▼
+                ┌────────────────┐
+                │  Spring Boot   │
+                │      :8080     │
+                └───────┬────────┘
+                        │
+                        │ Docker Network
+                        ▼
+                ┌────────────────┐
+                │     MySQL      │
+                │      :3306     │
+                └────────────────┘
 ```
+
+There are three runtime services:
+
+1. **MySQL** → Database
+2. **Spring Boot** → Backend application
+3. **Nginx** → Reverse proxy
 
 Maven is **not a separate Docker Compose service**. Maven is used in **Stage 1 of the Dockerfile** to build the Spring Boot JAR.
 
@@ -157,44 +181,26 @@ Maven is **not a separate Docker Compose service**. Maven is used in **Stage 1 o
 ```yaml
 services:
 
-  mainapp:
-    build: .
-    image: expenses-tracker-app
-
-    container_name: expensesapp-container
-
-    environment:
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Test@123
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/expenses_tracker?allowPublicKeyRetrieval=true&useSSL=false"
-
-    ports:
-      - "8080:8080"
-
-    networks:
-      - expenses-tracker-network
-
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-    restart: unless-stopped
-
-
+  # ============================================================
+  # MYSQL DATABASE
+  # ============================================================
   mysql:
     image: mysql:latest
+    container_name: mysql_container
 
-    container_name: mysql-container
+    ports:
+      - "3306:3306"
 
     environment:
-      MYSQL_DATABASE: expenses_tracker
       MYSQL_ROOT_PASSWORD: Test@123
+      MYSQL_DATABASE: expenses_tracker
 
     volumes:
+      # Persist MySQL data using a bind mount
       - ./mysql-database:/var/lib/mysql
 
     networks:
-      - expenses-tracker-network
+      - expenses-app-network
 
     restart: unless-stopped
 
@@ -206,21 +212,73 @@ services:
       start_period: 30s
 
 
+  # ============================================================
+  # SPRING BOOT APPLICATION
+  # ============================================================
+  java_app:
+    build: .
+    image: expenses-tracker
+    container_name: ExpensesTrackerApp-container
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/expenses_tracker
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Test@123
+
+    networks:
+      - expenses-app-network
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+
+  # ============================================================
+  # NGINX REVERSE PROXY
+  # ============================================================
+  nginx:
+    build:
+      context: ./nginx
+
+    image: expenses-tracker-nginx
+    container_name: nginx-container
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      java_app:
+        condition: service_started
+
+    networks:
+      - expenses-app-network
+
+    restart: unless-stopped
+
+
+# ============================================================
+# NETWORK
+# ============================================================
 networks:
-  expenses-tracker-network:
+  expenses-app-network:
 ```
 
 ---
 
 # 🔐 Where to Find Database Username, Password and Database Name
 
-When you need to check the **database username, password, or database name used by the Spring Boot application**, first check:
+When you need to check the database configuration used by the Spring Boot application, first check:
 
 ```text
 src/main/resources/application.properties
 ```
 
-Inside this file, look for the Spring datasource properties:
+Inside this file, look for:
 
 ```properties
 spring.datasource.url=...
@@ -253,28 +311,65 @@ Database : expenses_tracker
 Port     : 3306
 ```
 
-> **For Docker Compose:** also check the `environment:` section inside `docker-compose.yml`, because Docker Compose provides the database configuration to the Spring Boot and MySQL containers.
+## Docker Compose Configuration
+
+For Docker, also check the `environment:` section inside:
+
+```text
+docker-compose.yml
+```
+
+Spring Boot:
+
+```yaml
+environment:
+  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/expenses_tracker
+  SPRING_DATASOURCE_USERNAME: root
+  SPRING_DATASOURCE_PASSWORD: Test@123
+```
+
+MySQL:
+
+```yaml
+environment:
+  MYSQL_ROOT_PASSWORD: Test@123
+  MYSQL_DATABASE: expenses_tracker
+```
+
+So for this project:
+
+```text
+Spring Boot Username : root
+Spring Boot Password : Test@123
+MySQL Root Password  : Test@123
+Database             : expenses_tracker
+MySQL Port           : 3306
+Spring Boot Port     : 8080
+Nginx Port            : 80
+```
+
+> **Important:** `mysql` in `jdbc:mysql://mysql:3306/...` is the **Docker Compose service name**, not the container name.
 
 ---
 
 # 🐬 How to Enter MySQL Database
 
-First check whether the MySQL container is running:
+First check the running containers:
 
 ```bash
 docker ps
 ```
 
-The MySQL container name is:
+The MySQL container name comes from `docker-compose.yml`:
 
-```text
-mysql-container
+```yaml
+container_name: mysql_container
 ```
 
-You can directly enter MySQL using:
+Therefore, use:
 
 ```bash
-docker exec -it mysql-container mysql -u root -p
+docker exec -it mysql_container mysql -u root -p
 ```
 
 MySQL will ask:
@@ -296,7 +391,7 @@ Test@123
 You can also provide the password directly:
 
 ```bash
-docker exec -it mysql-container mysql -u root -pTest@123
+docker exec -it mysql_container mysql -u root -pTest@123
 ```
 
 > **Important:** There is **no space** between `-p` and `Test@123`.
@@ -304,13 +399,13 @@ docker exec -it mysql-container mysql -u root -pTest@123
 Correct:
 
 ```bash
-docker exec -it mysql-container mysql -u root -pTest@123
+docker exec -it mysql_container mysql -u root -pTest@123
 ```
 
 Not:
 
 ```bash
-docker exec -it mysql-container mysql -u root -p Test@123
+docker exec -it mysql_container mysql -u root -p Test@123
 ```
 
 ---
@@ -376,7 +471,7 @@ exit;
 You can also enter the MySQL container first:
 
 ```bash
-docker exec -it mysql-container bash
+docker exec -it mysql_container bash
 ```
 
 Then:
@@ -391,7 +486,7 @@ Enter:
 Test@123
 ```
 
-Then you can run:
+Then:
 
 ```sql
 SHOW DATABASES;
@@ -416,30 +511,105 @@ exit
 # 📌 MySQL Quick Reference
 
 ```text
-Container Name : mysql-container
+Service Name   : mysql
+Container Name : mysql_container
 Username       : root
 Password       : Test@123
 Database       : expenses_tracker
 Port           : 3306
 ```
 
-Direct MySQL login:
+Direct login:
 
 ```bash
-docker exec -it mysql-container mysql -u root -pTest@123
+docker exec -it mysql_container mysql -u root -pTest@123
 ```
 
 Login with password prompt:
 
 ```bash
-docker exec -it mysql-container mysql -u root -p
+docker exec -it mysql_container mysql -u root -p
 ```
 
 Enter container:
 
 ```bash
-docker exec -it mysql-container bash
+docker exec -it mysql_container bash
 ```
+
+---
+
+# 🌐 Nginx Reverse Proxy
+
+Nginx is used as a **reverse proxy** in front of the Spring Boot application.
+
+The request flow is:
+
+```text
+Browser
+   │
+   │ http://localhost
+   ▼
+Nginx :80
+   │
+   │ Docker Network
+   ▼
+Spring Boot :8080
+   │
+   │ Docker Network
+   ▼
+MySQL :3306
+```
+
+The user accesses:
+
+```text
+http://localhost
+```
+
+Nginx receives the request on:
+
+```text
+Port 80
+```
+
+and forwards the request to the Spring Boot application on:
+
+```text
+java_app:8080
+```
+
+Because both containers are connected to:
+
+```yaml
+expenses-app-network
+```
+
+Nginx can communicate with Spring Boot using the Docker Compose service name:
+
+```text
+java_app
+```
+
+---
+
+# 📁 Nginx Directory
+
+The Nginx service is built from:
+
+```yaml
+nginx:
+  build:
+    context: ./nginx
+```
+
+Therefore, the project contains an Nginx directory:
+
+```text
+nginx/
+```
+
+The Nginx Docker configuration and reverse-proxy configuration are kept inside this directory.
 
 ---
 
@@ -469,9 +639,9 @@ Indicates that Java is connecting to a **MySQL database using JDBC**.
 
 ### `mysql`
 
-This is the **Docker Compose service name** of the MySQL container.
+This is the **Docker Compose service name** of the MySQL service.
 
-Docker's internal DNS allows the Spring Boot container to find the MySQL container using this service name.
+Docker's internal DNS allows the Spring Boot container to find the MySQL service using this name.
 
 ### `3306`
 
@@ -481,199 +651,142 @@ This is the default MySQL port.
 
 This is the MySQL database name.
 
-## Additional Parameters
-
-The URL also contains:
-
-```text
-?allowPublicKeyRetrieval=true&useSSL=false
-```
-
-These are additional MySQL JDBC connection parameters.
-
-* `allowPublicKeyRetrieval=true` allows the JDBC driver to retrieve the MySQL server public key when required for authentication.
-* `useSSL=false` disables SSL/TLS for the database connection.
-
 ---
 
-# Important: `mysql` vs `mysql_db` Service Name
+# Important: Service Name vs Container Name
 
-One important Docker Compose concept is that the hostname used by the Spring Boot application must match the **Docker Compose service name**.
+This is an important Docker Compose concept.
 
-For example:
+In our configuration:
 
 ```yaml
 services:
 
   mysql:
     image: mysql:latest
-    container_name: mysql-container
+    container_name: mysql_container
 ```
 
-Here:
+There are two different names:
 
 ```text
 mysql
-    ↓
+   ↓
 Docker Compose service name
 
-mysql-container
-    ↓
+mysql_container
+   ↓
 Container name
 ```
 
-Therefore, Spring Boot connects using:
+For container-to-container communication, use the **service name**.
+
+Therefore, Spring Boot uses:
 
 ```yaml
 SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/expenses_tracker
 ```
 
-The hostname is:
+It uses:
 
 ```text
 mysql
 ```
 
-because `mysql` is the Compose service name.
-
-## What If We Rename `mysql` to `mysql_db`?
-
-Suppose we change the service name:
-
-```yaml
-services:
-
-  mysql_db:
-    image: mysql:latest
-    container_name: mysql-container
-```
-
-Now the Spring Boot JDBC URL must also change:
-
-```yaml
-SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/expenses_tracker
-```
-
-It must **not** remain:
-
-```yaml
-SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/expenses_tracker
-```
-
-because there is no longer a Compose service called `mysql`.
-
-The same applies to `depends_on`.
-
-If the service is:
-
-```yaml
-mysql_db:
-```
-
-then:
-
-```yaml
-depends_on:
-  - mysql_db
-```
-
-should be used.
-
-## Example of Correct Configuration
-
-```yaml
-services:
-
-  mysql_db:
-    image: mysql:latest
-
-  java_app:
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/expenses_tracker
-
-    depends_on:
-      - mysql_db
-```
-
-The communication works like this:
+NOT:
 
 ```text
-Spring Boot Container
-        │
-        │ jdbc:mysql://mysql_db:3306/expenses_tracker
+mysql_container
+```
+
+## Why?
+
+Docker Compose provides internal DNS using the service name.
+
+The communication is:
+
+```text
+Spring Boot
+    │
+    │ jdbc:mysql://mysql:3306/expenses_tracker
+    ▼
+mysql service
+    │
+    ▼
+mysql_container
+```
+
+## Container Name Is Used by Docker Commands
+
+When using:
+
+```bash
+docker exec
+```
+
+we use the actual container name:
+
+```bash
+docker exec -it mysql_container bash
+```
+
+or:
+
+```bash
+docker exec -it mysql_container mysql -u root -p
+```
+
+So remember:
+
+```text
+JDBC / Docker Network
         ↓
-   mysql_db service
-        │
+Use service name: mysql
+
+docker exec
         ↓
-  MySQL Container
+Use container name: mysql_container
 ```
 
-## Example of Incorrect Configuration
+---
+
+# Nginx vs Spring Boot vs MySQL Names
+
+The same concept applies to all services.
 
 ```yaml
 services:
 
-  mysql_db:
-    image: mysql:latest
-
-  java_app:
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/expenses_tracker
-
-    depends_on:
-      - mysql_db
-```
-
-This is incorrect because:
-
-```text
-Compose service name = mysql_db
-JDBC hostname       = mysql
-```
-
-The names do not match.
-
-## Key Rule
-
-> **For container-to-container communication in Docker Compose, use the Docker Compose service name as the hostname.**
-
-For example:
-
-```text
-services:
   mysql:
+    container_name: mysql_container
+
+  java_app:
+    container_name: ExpensesTrackerApp-container
+
+  nginx:
+    container_name: nginx-container
 ```
 
-means:
+| Service     | Service Name | Container Name                 | Internal Port |
+| ----------- | ------------ | ------------------------------ | ------------: |
+| MySQL       | `mysql`      | `mysql_container`              |        `3306` |
+| Spring Boot | `java_app`   | `ExpensesTrackerApp-container` |        `8080` |
+| Nginx       | `nginx`      | `nginx-container`              |          `80` |
+
+For Docker network communication:
 
 ```text
-jdbc:mysql://mysql:3306/expenses_tracker
+Spring Boot → mysql:3306
+Nginx       → java_app:8080
 ```
 
-And:
+For Docker commands:
 
 ```text
-services:
-  mysql_db:
+MySQL       → mysql_container
+Spring Boot → ExpensesTrackerApp-container
+Nginx       → nginx-container
 ```
-
-means:
-
-```text
-jdbc:mysql://mysql_db:3306/expenses_tracker
-```
-
-### Service Name vs Container Name
-
-| Configuration                     | Purpose                                 |
-| --------------------------------- | --------------------------------------- |
-| `mysql:`                          | Docker Compose service name             |
-| `mysql_db:`                       | Alternative Docker Compose service name |
-| `container_name: mysql-container` | Custom Docker container name            |
-| `jdbc:mysql://mysql:3306/...`     | Uses `mysql` service as hostname        |
-| `jdbc:mysql://mysql_db:3306/...`  | Uses `mysql_db` service as hostname     |
-
-**Remember:** Changing the Compose service name requires updating the JDBC hostname and `depends_on` references.
 
 ---
 
@@ -704,17 +817,29 @@ Therefore:
 Local machine
      │
      │ ./mysql-database
-     ↓
+     ▼
 MySQL container
      │
      │ /var/lib/mysql
-     ↓
+     ▼
 MySQL database files
 ```
 
 This allows the database data to persist when the MySQL container is recreated.
 
-## `.dockerignore`
+## Check MySQL Data Directory
+
+The project uses a local bind mount:
+
+```text
+./mysql-database
+```
+
+So the database files are stored inside the project directory.
+
+---
+
+# `.dockerignore`
 
 Because `mysql-database` is located inside the project directory, Docker may try to include the database files in the Docker build context.
 
@@ -725,64 +850,35 @@ mysql-database/
 target/
 .git/
 .gitignore
-.env
 ```
 
-This prevents unnecessary or sensitive files from being sent to Docker during the build.
-
----
-
-# Environment Variables
-
-Create a `.env` file in the project directory:
-
-```env
-MYSQL_ROOT_PASSWORD=your_secure_password
-```
-
-The `.env` file can be used by Docker Compose to provide environment-specific values.
-
-Do **not** commit `.env` to GitHub.
-
-Add it to `.gitignore`:
-
-```text
-.env
-```
-
-For production deployments, use a secure secret-management solution instead of storing passwords directly in the Compose file.
+This prevents unnecessary files from being sent to Docker during the build.
 
 ---
 
 # Running the Application with Docker
 
-## 1. Build the Docker Image
+## 1. Build the Docker Images
 
 ```bash
 docker compose build
 ```
 
-This executes the Dockerfile.
-
-During Stage 1:
+This builds:
 
 ```text
-Maven + Java 17
-       ↓
-Compile source code
-       ↓
-Create JAR
+Spring Boot Image
+        +
+Nginx Image
 ```
 
-During Stage 2:
+MySQL uses the official:
 
 ```text
-Java 17 JRE
-       ↓
-Copy JAR
-       ↓
-Run Spring Boot
+mysql:latest
 ```
+
+image, so Docker pulls it if it is not already available locally.
 
 ## 2. Start the Containers
 
@@ -792,8 +888,11 @@ docker compose up -d
 
 This starts:
 
-* Spring Boot application
-* MySQL database
+```text
+mysql_container
+ExpensesTrackerApp-container
+nginx-container
+```
 
 ## 3. Check Running Containers
 
@@ -801,16 +900,24 @@ This starts:
 docker compose ps
 ```
 
-## 4. View Spring Boot Logs
+or:
 
 ```bash
-docker compose logs mainapp
+docker ps
+```
+
+## 4. View Spring Boot Logs
+
+Using Compose service name:
+
+```bash
+docker compose logs java_app
 ```
 
 To follow the logs:
 
 ```bash
-docker compose logs -f mainapp
+docker compose logs -f java_app
 ```
 
 ## 5. View MySQL Logs
@@ -825,7 +932,19 @@ To follow the logs:
 docker compose logs -f mysql
 ```
 
-## 6. Stop the Application
+## 6. View Nginx Logs
+
+```bash
+docker compose logs nginx
+```
+
+To follow the logs:
+
+```bash
+docker compose logs -f nginx
+```
+
+## 7. Stop the Application
 
 ```bash
 docker compose down
@@ -843,35 +962,63 @@ remains because it is stored using a bind mount.
 
 # Access the Application
 
-After the containers are running, open:
+Because Nginx is the reverse proxy, the normal application entry point is:
 
 ```text
-http://localhost:8080
+http://localhost
 ```
 
-For an AWS EC2 deployment, use:
+Nginx listens on:
+
+```text
+80
+```
+
+Docker Compose maps:
+
+```yaml
+ports:
+  - "80:80"
+```
+
+Therefore:
+
+```text
+Browser
+   │
+   ▼
+localhost:80
+   │
+   ▼
+Nginx
+   │
+   ▼
+Spring Boot:8080
+```
+
+## AWS EC2
+
+For an AWS EC2 deployment:
+
+```text
+http://<EC2-PUBLIC-IP>
+```
+
+Make sure the EC2 Security Group allows inbound TCP traffic on:
+
+```text
+80
+```
+
+You normally do **not** need to access Spring Boot directly from the browser because Nginx is handling the external request.
+
+Spring Boot is still available through:
 
 ```text
 http://<EC2-PUBLIC-IP>:8080
 ```
 
-Make sure the EC2 Security Group allows inbound TCP traffic on port `8080` if you are accessing the application directly from the internet.
-
-The Docker Compose port mapping is:
-
-```yaml
-ports:
-  - "8080:8080"
-```
-
-This means:
-
-```text
-Host machine port 8080
-        │
-        ↓
-Spring Boot container port 8080
-```
+if port `8080` is exposed and allowed by the Security Group.
 
 ---
 
@@ -885,15 +1032,13 @@ Create the `expenses_tracker` database in MySQL and configure the database conne
 src/main/resources/application.properties
 ```
 
-Check this file for:
+Check:
 
 ```properties
 spring.datasource.url=...
 spring.datasource.username=...
 spring.datasource.password=...
 ```
-
-This is where you can check the **username, password, database name, and database connection URL** used by the Spring Boot application.
 
 ## 2. Build the Application
 
@@ -915,6 +1060,8 @@ Open:
 http://localhost:8080
 ```
 
+When running without Docker, Nginx is not required unless you configure it separately.
+
 ---
 
 # Troubleshooting
@@ -930,7 +1077,7 @@ docker compose ps
 Then check Spring Boot logs:
 
 ```bash
-docker compose logs mainapp
+docker compose logs java_app
 ```
 
 Check MySQL logs:
@@ -941,33 +1088,41 @@ docker compose logs mysql
 
 ### Check the JDBC hostname
 
-If your Compose service is:
+Our Compose service is:
 
 ```yaml
 mysql:
 ```
 
-your JDBC URL should use:
+Therefore, the JDBC URL should use:
 
 ```text
 jdbc:mysql://mysql:3306/expenses_tracker
 ```
 
-If your Compose service is:
-
-```yaml
-mysql_db:
-```
-
-your JDBC URL should use:
+Do **not** use:
 
 ```text
-jdbc:mysql://mysql_db:3306/expenses_tracker
+jdbc:mysql://mysql_container:3306/expenses_tracker
 ```
 
-The service name and JDBC hostname must match.
+because:
 
-### Check MySQL Health
+```text
+mysql
+   ↓
+Service name
+
+mysql_container
+   ↓
+Container name
+```
+
+For Docker network communication, use the service name.
+
+---
+
+# Check MySQL Health
 
 The MySQL service has a healthcheck:
 
@@ -989,6 +1144,55 @@ depends_on:
 ```
 
 This makes Docker Compose wait for the MySQL service to become healthy before starting the Spring Boot application.
+
+---
+
+# Check Nginx
+
+Check the Nginx container:
+
+```bash
+docker ps
+```
+
+Check Nginx logs:
+
+```bash
+docker compose logs nginx
+```
+
+Check the Nginx configuration/build:
+
+```bash
+docker compose build nginx
+```
+
+Restart Nginx:
+
+```bash
+docker compose restart nginx
+```
+
+If Nginx is running but the application is not accessible, check:
+
+```bash
+docker compose ps
+```
+
+Then check:
+
+```bash
+docker compose logs nginx
+docker compose logs java_app
+```
+
+Remember that Nginx should communicate with Spring Boot using:
+
+```text
+java_app:8080
+```
+
+because `java_app` is the Docker Compose service name.
 
 ---
 
@@ -1036,6 +1240,60 @@ docker compose up -d --build
 docker compose down
 ```
 
+### View All Logs
+
+```bash
+docker compose logs
+```
+
+### Follow All Logs
+
+```bash
+docker compose logs -f
+```
+
+### Spring Boot Logs
+
+```bash
+docker compose logs -f java_app
+```
+
+### MySQL Logs
+
+```bash
+docker compose logs -f mysql
+```
+
+### Nginx Logs
+
+```bash
+docker compose logs -f nginx
+```
+
+### Enter MySQL
+
+```bash
+docker exec -it mysql_container mysql -u root -p
+```
+
+### Enter MySQL Container
+
+```bash
+docker exec -it mysql_container bash
+```
+
+### Enter Spring Boot Container
+
+```bash
+docker exec -it ExpensesTrackerApp-container bash
+```
+
+### Enter Nginx Container
+
+```bash
+docker exec -it nginx-container sh
+```
+
 ### Stop and Remove Containers and Volumes
 
 ```bash
@@ -1043,6 +1301,112 @@ docker compose down -v
 ```
 
 > **Warning:** Do not use `docker compose down -v` if you need to preserve Docker-managed volumes. For this project, the MySQL database uses a bind mount, so `./mysql-database` is outside the Docker volume system.
+
+---
+
+# Quick Architecture
+
+```text
+                         🌐 USER
+                           │
+                           │ HTTP :80
+                           ▼
+                  ┌──────────────────┐
+                  │      NGINX       │
+                  │ nginx-container  │
+                  │       :80        │
+                  └────────┬─────────┘
+                           │
+                           │ java_app:8080
+                           ▼
+                  ┌──────────────────┐
+                  │   SPRING BOOT    │
+                  │ ExpensesTracker  │
+                  │     :8080        │
+                  └────────┬─────────┘
+                           │
+                           │ mysql:3306
+                           ▼
+                  ┌──────────────────┐
+                  │      MYSQL       │
+                  │ mysql_container  │
+                  │     :3306        │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ./mysql-database
+```
+
+---
+
+# 📌 Final Project Quick Reference
+
+```text
+Project
+└── Expenses Tracker
+      │
+      ├── Spring Boot
+      │     Service  : java_app
+      │     Container: ExpensesTrackerApp-container
+      │     Port     : 8080
+      │
+      ├── MySQL
+      │     Service  : mysql
+      │     Container: mysql_container
+      │     Port     : 3306
+      │     Database : expenses_tracker
+      │     Username : root
+      │     Password : Test@123
+      │
+      └── Nginx
+            Service  : nginx
+            Container: nginx-container
+            Port     : 80
+```
+
+### Main Commands
+
+Start:
+
+```bash
+docker compose up -d
+```
+
+Check:
+
+```bash
+docker compose ps
+```
+
+Open application:
+
+```text
+http://localhost
+```
+
+MySQL login:
+
+```bash
+docker exec -it mysql_container mysql -u root -p
+```
+
+MySQL direct login:
+
+```bash
+docker exec -it mysql_container mysql -u root -pTest@123
+```
+
+Stop:
+
+```bash
+docker compose down
+```
+
+Rebuild:
+
+```bash
+docker compose up -d --build
+```
 
 ---
 

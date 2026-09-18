@@ -137,6 +137,8 @@ If `id_ed25519` and `id_ed25519.pub` do not exist:
 
 ```bash
 ssh-keygen -t ed25519 -C "ec2-github"
+        or
+ssh-keygen
 ```
 
 ### Meaning
@@ -752,7 +754,7 @@ Use this checklist whenever you create a new EC2:
     ls -la ~/.ssh
 
 [ ] If key doesn't exist, create it
-    ssh-keygen -t ed25519 -C "ec2-github"
+    ssh-keygen 
 
 [ ] Get public key
     cat ~/.ssh/id_ed25519.pub
@@ -774,39 +776,3 @@ Use this checklist whenever you create a new EC2:
 ```
 
 ---
-
-# 🎯 Final Concept
-
-Remember these **4 things**:
-
-```text
-1️⃣ SSH Key
-   ↓
-   Allows secure authentication
-
-2️⃣ Public Key
-   ↓
-   Add to GitHub
-
-3️⃣ ssh -T git@github.com
-   ↓
-   Test authentication
-
-4️⃣ git clone git@github.com:USER/REPO.git
-   ↓
-   Clone repository using SSH
-```
-
-### Most important commands:
-
-```bash
-ls -la ~/.ssh
-
-cat ~/.ssh/id_ed25519.pub
-
-ssh -T git@github.com
-
-git clone git@github.com:USERNAME/REPOSITORY.git
-```
-
-> **Remember:** On every new EC2, first check `~/.ssh`. If an SSH key already exists, use it instead of blindly generating another one.

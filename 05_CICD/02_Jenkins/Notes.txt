@@ -1,1 +1,78 @@
 Day-01 Introduction to Jenkins
+
+Install nodejs and npm 
+# 1. Download and run the NVM installation script
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
+
+# 2. Refresh your terminal profile to start using NVM
+source ~/.bashrc
+
+# 3. Install the latest Long-Term Support (LTS) version of Node.js (includes npm)
+nvm install --lts
+
+# 4. Verify the installations
+node -v
+npm -v
+
+# Install java 
+sudo apt install fontconfig openjdk-21-jre
+java -version
+
+# Install Jenkins 
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update
+sudo apt install jenkins
+
+refer this 
+https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+
+****************************************************************************
+# Allow port in  EC2 inbound rule 
+- 8080
+
+# Open Jenkins in browser using
+- EC2@IP:8080
+
+# create user and password
+- admin
+- admin
+
+***************************************************************************
+### Jenkins Node Offline — Disk Space Issue
+
+**Issue:**
+`Disk space is below threshold of 1.00 GiB` on `/tmp`
+
+**Fix:**
+
+`Jenkins Dashboard`
+→ `Manage Jenkins`
+→ `Nodes`
+→ `Built-In Node`
+→ `Configure`
+→ `Node Monitors`
+
+Set:
+
+```text
+Free Temp Space: 500 MiB
+Free Space Warning Threshold: 700 MiB
+```
+
+→ **Save**
+
+**Check /tmp space:**
+
+```bash
+df -h /tmp
+```
+
+**Remember:**
+If Jenkins says **Disk space below threshold** and mentions `/tmp` → check **Node Monitors → Free Temp Space**.
+

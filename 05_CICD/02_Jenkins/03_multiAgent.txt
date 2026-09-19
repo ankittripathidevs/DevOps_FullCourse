@@ -1,0 +1,74 @@
+# Jenkins Master-Agent Setup
+
+### Why?
+
+```text
+Building on built-in node can be a security issue
+→ Set up distributed builds
+```
+
+### 1. Create Agent Server
+
+```text
+Create another EC2 instance
+Name: Jenkins-Agent
+```
+
+Install Java on the Agent.
+
+### 2. Create SSH Key on Jenkins Master
+
+On **Jenkins Master**:
+
+```bash
+cd ~/.ssh
+ls
+```
+
+If SSH key doesn't exist:
+
+```bash
+ssh-keygen
+```
+
+This creates:
+
+```text
+Private key → id_ed25519
+Public key  → id_ed25519.pub
+```
+
+### 3. Connect Master → Agent
+
+```text
+Jenkins Master
+      ↓ SSH
+Jenkins-Agent EC2
+```
+
+Add Master's public SSH key to the Agent's:
+
+```text
+~/.ssh/authorized_keys
+```
+
+### 4. Jenkins UI
+
+```text
+Manage Jenkins
+   ↓
+Nodes / Agents
+   ↓
+New Node / Set up Agent
+```
+
+Create the **Jenkins-Agent** node and configure it to connect through **SSH**.
+
+**Remember:**
+
+```text
+Master = controls Jenkins
+Agent  = executes builds
+SSH     = connects Master → Agent
+```
+

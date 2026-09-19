@@ -1,0 +1,205 @@
+# Jenkins — My First Simple Freestyle Job
+
+## 1. Create a New Job
+
+Jenkins Dashboard → **New Item**
+
+Enter:
+
+* **Item name:** `myfirstjob`
+* Select **Freestyle project**
+* Click **OK**
+
+---
+
+## 2. Description
+
+In **Description**, write:
+
+```text
+This is my simple job first
+```
+
+---
+
+## 3. Discard Old Builds
+
+Go to:
+
+**General → Discard old builds**
+
+Enable it.
+
+Example settings:
+
+```text
+Days to keep builds: 3
+Max # of builds to keep: 2
+```
+
+> You can change these values as you wish.
+
+Click **Save** or continue configuring.
+
+---
+
+## 4. Build Steps
+
+Go to:
+
+**Build Steps → Add build step → Execute shell**
+
+Enter:
+
+```bash
+echo "hello"
+
+echo "Jenkins CICD"
+
+mkdir -p Devops
+
+echo "created Devops folder"
+```
+
+### What this does:
+
+* `echo "hello"` → prints `hello`
+* `echo "Jenkins CICD"` → prints `Jenkins CICD`
+* `mkdir -p Devops` → creates a `Devops` directory
+* `echo "created Devops folder"` → prints confirmation
+
+---
+
+## 5. Save the Job
+
+Click:
+
+**Save**
+
+You should now see your job:
+
+```text
+myfirstjob
+```
+
+---
+
+## 6. Build Now
+
+Open:
+
+**myfirstjob → Build Now**
+
+Jenkins will create a build, for example:
+
+```text
+#1
+```
+
+Click the build number.
+
+Then go to:
+
+**Console Output**
+
+You should see something similar to:
+
+```text
+Started by user ...
+Building in workspace ...
+
+hello
+Jenkins CICD
+created Devops folder
+
+Finished: SUCCESS
+```
+
+---
+
+
+For learning, **Build Now** is enough initially.
+
+---
+
+## Important: Where is the `Devops` folder?
+
+The command:
+
+```bash
+mkdir -p Devops
+```
+
+creates the folder in the **Jenkins job's current workspace**, not necessarily in your Ubuntu user's home directory.
+
+Jenkins workspace is typically:
+
+```text
+/var/lib/jenkins/workspace/myfirstjob/
+```
+
+You can check it from the job's **Workspace** page or from the shell:
+
+```bash
+pwd
+ls -la
+```
+
+A useful version of the build step is:
+
+```bash
+echo "hello"
+echo "Jenkins CICD"
+
+pwd
+mkdir -p Devops
+ls -la
+
+echo "created Devops folder"
+```
+
+---
+
+# Quick Revision Flow
+
+Remember Jenkins Freestyle Job like this:
+
+```text
+Jenkins Dashboard
+       ↓
+New Item
+       ↓
+Freestyle project
+       ↓
+Description
+       ↓
+Discard old builds
+       ↓
+Build Steps
+       ↓
+Execute shell
+       ↓
+Write commands
+       ↓
+Save
+       ↓
+Build Now
+       ↓
+Build #1
+       ↓
+Console Output
+       ↓
+SUCCESS
+```
+
+
+# Key Jenkins Concepts
+
+```text
+Job       → What Jenkins should do
+Build     → One execution/run of that job
+Workspace → Directory where the job executes
+Build Step → Actual commands/actions performed
+Console Output → Logs produced by the build
+```
+

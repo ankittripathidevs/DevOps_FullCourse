@@ -1,0 +1,44 @@
+# Jenkins First Pipeline
+
+**Called:** Jenkins Pipeline Job
+**Syntax:** Declarative Pipeline
+
+### Steps
+
+```text
+New Item
+  ↓
+Pipeline
+  ↓
+Description
+  ↓
+Pipeline → Pipeline script
+  ↓
+Write script
+  ↓
+Save
+  ↓
+Build Now
+  ↓
+#1 → Console Output
+```
+
+### Simple Pipeline Script
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+}
+```
+
+**Remember:**
+`pipeline → agent → stages → stage → steps → echo`
+

@@ -1,78 +1,529 @@
-Day-01 Introduction to Jenkins
+# Ubuntu EC2 — Jenkins + Docker CI/CD Setup
 
-Install nodejs and npm 
-# 1. Download and run the NVM installation script
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
+Simple setup for a fresh Ubuntu EC2 server.
 
-# 2. Refresh your terminal profile to start using NVM
-source ~/.bashrc
+> Buildx is intentionally excluded for now.
 
-# 3. Install the latest Long-Term Support (LTS) version of Node.js (includes npm)
-nvm install --lts
+---
 
-# 4. Verify the installations
-node -v
-npm -v
-
-# Install java 
-sudo apt install fontconfig openjdk-21-jre
-java -version
-
-# Install Jenkins 
-
-sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
-  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
-echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
-  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt update
-sudo apt install jenkins
-
-refer this 
-https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
-
-
-****************************************************************************
-# Allow port in  EC2 inbound rule 
-- 8080
-
-# Open Jenkins in browser using
-- EC2@IP:8080
-
-# create user and password
-- admin
-- admin
-
-***************************************************************************
-### Jenkins Node Offline — Disk Space Issue
-
-**Issue:**
-`Disk space is below threshold of 1.00 GiB` on `/tmp`
-
-**Fix:**
-
-`Jenkins Dashboard`
-→ `Manage Jenkins`
-→ `Nodes`
-→ `Built-In Node`
-→ `Configure`
-→ `Node Monitors`
-
-Set:
-
-```text
-Free Temp Space: 500 MiB
-Free Space Warning Threshold: 700 MiB
-```
-
-→ **Save**
-
-**Check /tmp space:**
+# 1. Update Ubuntu
 
 ```bash
-df -h /tmp
+sudo apt update
+sudo apt upgrade -y
 ```
 
-**Remember:**
-If Jenkins says **Disk space below threshold** and mentions `/tmp` → check **Node Monitors → Free Temp Space**.
+---
 
+# 2. Install Git
+
+```bash
+sudo apt install git -y
+```
+
+Check:
+
+```bash
+git --version
+```
+
+Configure Git:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+```
+
+---
+
+# 3. Install Docker
+
+For the simple Ubuntu package:
+
+```bash
+sudo apt install docker.io -y
+```
+
+Start Docker:
+
+```bash
+sudo systemctl start docker
+```
+
+Enable Docker at boot:
+
+```bash
+sudo systemctl enable docker
+```
+
+Check:
+
+```bash
+sudo systemctl status docker
+```
+
+Check version:
+
+```bash
+docker --version
+```
+
+Test:
+
+```bash
+sudo docker run hello-world
+```
+
+---
+
+# 4. Give Your Ubuntu User Docker Permission
+
+By default you may need:
+
+```bash
+sudo docker ps
+```
+
+Add your current user to the Docker group:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Apply the group change immediately:
+
+```bash
+newgrp docker
+```
+
+Now test:
+
+```bash
+docker ps
+```
+
+You should be able to use Docker without `sudo`.
+
+Check:
+
+```bash
+groups
+```
+
+You should see:
+
+```text
+docker
+```
+
+---
+
+# 5. Install Docker Compose V2
+
+For Ubuntu's Docker package, install the Compose V2 plugin:
+
+```bash
+sudo apt update
+sudo apt install docker-compose-v2 -y
+```
+
+Check:
+
+```bash
+docker compose version
+```
+
+Use:
+
+```bash
+docker compose
+```
+
+### Do NOT use the old command:
+
+```bash
+docker-compose
+```
+
+For modern Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+---
+
+# 6. Install Node.js + npm — LTS
+
+Use NodeSource for the current Node.js LTS line.
+
+Install curl:
+
+```bash
+sudo apt install curl -y
+```
+
+Add the LTS repository:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+```
+
+Install Node.js:
+
+```bash
+sudo apt install nodejs -y
+```
+
+Check Node:
+
+```bash
+node --version
+```
+
+Check npm:
+
+```bash
+npm --version
+```
+
+The exact LTS version will change over time.
+
+---
+
+# 7. Install Java
+
+Install the Java version required by the current Jenkins documentation.
+
+For a typical Jenkins setup:
+
+```bash
+sudo apt install fontconfig openjdk-21-jre -y
+```
+
+Check:
+
+```bash
+java -version
+```
+
+Jenkins' supported Java versions can change, so when setting up a new server, follow the Java version specified in the current Jenkins documentation.
+
+---
+
+# 8. Install Jenkins
+
+Follow the official Jenkins Linux/Debian installation instructions for the repository and signing key.
+
+After adding the Jenkins repository:
+
+```bash
+sudo apt update
+sudo apt install jenkins -y
+```
+
+Start Jenkins:
+
+```bash
+sudo systemctl start jenkins
+```
+
+Enable Jenkins at boot:
+
+```bash
+sudo systemctl enable jenkins
+```
+
+Check:
+
+```bash
+sudo systemctl status jenkins
+```
+
+Check version:
+
+```bash
+jenkins --version
+```
+
+---
+
+# 9. Get Jenkins Initial Password
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Open Jenkins:
+
+```text
+http://EC2_PUBLIC_IP:8080
+```
+
+Make sure your EC2 Security Group allows:
+
+```text
+TCP 8080
+```
+
+---
+
+# 10. Give Jenkins Permission to Use Docker
+
+This is VERY important.
+
+Jenkins runs as:
+
+```text
+jenkins
+```
+
+Your Ubuntu user is:
+
+```text
+ubuntu
+```
+
+Giving Docker permission to `ubuntu` does NOT give it to Jenkins.
+
+Add Jenkins to the Docker group:
+
+```bash
+sudo usermod -aG docker jenkins
+```
+
+Restart Jenkins:
+
+```bash
+sudo systemctl restart jenkins
+```
+
+---
+
+# 11. Verify Jenkins Can Use Docker
+
+Run:
+
+```bash
+sudo -u jenkins docker ps
+```
+
+If it works, Jenkins can communicate with Docker.
+
+Check Jenkins groups:
+
+```bash
+groups jenkins
+```
+
+You should see:
+
+```text
+docker
+```
+
+---
+
+# 12. Verify Jenkins Can Use Docker Compose V2
+
+Run:
+
+```bash
+sudo -u jenkins docker compose version
+```
+
+You should get something like:
+
+```text
+Docker Compose version v2.x.x
+```
+
+If Compose isn't available:
+
+```bash
+sudo apt install docker-compose-v2 -y
+```
+
+Then:
+
+```bash
+sudo systemctl restart jenkins
+```
+
+Test again:
+
+```bash
+sudo -u jenkins docker compose version
+```
+
+---
+
+# 13. Final Verification
+
+### Git
+
+```bash
+git --version
+```
+
+### Node
+
+```bash
+node --version
+```
+
+### npm
+
+```bash
+npm --version
+```
+
+### Java
+
+```bash
+java -version
+```
+
+### Docker
+
+```bash
+docker --version
+```
+
+### Docker Compose V2
+
+```bash
+docker compose version
+```
+
+### Jenkins
+
+```bash
+jenkins --version
+```
+
+### Ubuntu user → Docker
+
+```bash
+docker ps
+```
+
+### Jenkins → Docker
+
+```bash
+sudo -u jenkins docker ps
+```
+
+### Jenkins → Docker Compose
+
+```bash
+sudo -u jenkins docker compose version
+```
+
+---
+
+# 14. Complete Command List
+
+For quick reference:
+
+```bash
+# Update
+sudo apt update
+sudo apt upgrade -y
+
+# Git
+sudo apt install git -y
+
+# Docker
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Ubuntu user → Docker
+sudo usermod -aG docker $USER
+newgrp docker
+
+# Docker Compose V2
+sudo apt install docker-compose-v2 -y
+
+# Node.js + npm LTS
+sudo apt install curl -y
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install nodejs -y
+
+# Java
+sudo apt install fontconfig openjdk-21-jre -y
+
+# Jenkins
+sudo apt install jenkins -y
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+# Jenkins → Docker
+sudo usermod -aG docker jenkins
+sudo systemctl restart jenkins
+
+# Verify Jenkins Docker access
+sudo -u jenkins docker ps
+
+# Verify Jenkins Compose access
+sudo -u jenkins docker compose version
+```
+
+---
+
+# 15. Permission Concept
+
+Remember this:
+
+```text
+Ubuntu user
+    │
+    └── docker group
+          ↓
+       Docker
+```
+
+And separately:
+
+```text
+Jenkins user
+    │
+    └── docker group
+          ↓
+       Docker
+```
+
+Therefore:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+means:
+
+> Give my current Linux user permission to use Docker.
+
+While:
+
+```bash
+sudo usermod -aG docker jenkins
+```
+
+means:
+
+> Give the Jenkins Linux user permission to use Docker.
+
+The incorrect order:
+
+```bash
+sudo usermod -aG jenkins docker
+```
+
+would mean:
+
+> Add the `docker` user to the `jenkins` group.
+
+That's not what you want.
+
+---

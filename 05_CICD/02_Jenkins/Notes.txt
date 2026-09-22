@@ -2,10 +2,6 @@
 
 Simple setup for a fresh Ubuntu EC2 server.
 
-> Buildx is intentionally excluded for now.
-
----
-
 # 1. Update Ubuntu
 
 ```bash
@@ -102,20 +98,6 @@ Now test:
 docker ps
 ```
 
-You should be able to use Docker without `sudo`.
-
-Check:
-
-```bash
-groups
-```
-
-You should see:
-
-```text
-docker
-```
-
 ---
 
 # 5. Install Docker Compose V2
@@ -204,7 +186,7 @@ sudo apt install fontconfig openjdk-21-jre -y
 Check:
 
 ```bash
-java -version
+java --version
 ```
 
 Jenkins' supported Java versions can change, so when setting up a new server, follow the Java version specified in the current Jenkins documentation.

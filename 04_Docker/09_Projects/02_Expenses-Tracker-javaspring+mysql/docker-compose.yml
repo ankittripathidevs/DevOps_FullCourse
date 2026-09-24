@@ -34,7 +34,7 @@ services:
     image: expenses-tracker
     container_name: expenses-tracker-container
     ports:
-      - "8080:8080"
+      - "8000:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/expenses_tracker
       SPRING_DATASOURCE_USERNAME: root

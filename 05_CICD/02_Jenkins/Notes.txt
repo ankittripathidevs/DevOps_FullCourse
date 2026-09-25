@@ -1,219 +1,545 @@
-# Ubuntu EC2 — Jenkins + Docker CI/CD
+Ubuntu EC2 — Jenkins + Docker CI/CD
 
-## Step 1 — Update & Upgrade
+Step 1 — Update & Upgrade
 
-```bash
-# Update package list
-sudo apt update
+    # Update package list
+    sudo apt update
 
-# Upgrade installed packages
-sudo apt upgrade -y
-```
+    # Upgrade installed packages
+    sudo apt upgrade -y
 
-## Step 2 — Git
+Step 2 — Git
 
-```bash
-# Install Git
-sudo apt install git -y
+    # Install Git
+    sudo apt install git -y
 
-# Check Git version
-git --version
+    # Check Git version
+    git --version
 
-# Configure Git
-git config --global user.name "ankittripathidevs"
-git config --global user.email "ankittripathi2k24@gmail.com"
-```
+    # Configure Git
+    git config --global user.name "ankittripathidevs"
+    git config --global user.email "ankittripathi2k24@gmail.com"
 
-## Step 3 — Node.js + npm (LTS)
+Step 3 — Node.js + npm (LTS)
 
-```bash
-# Install curl
-sudo apt install curl -y
+    # Install curl
+    sudo apt install curl -y
 
-# Install NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    # Install NVM
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 
-# Reload shell
-source ~/.bashrc
+    # Reload shell
+    source ~/.bashrc
 
-# Install Node.js LTS
-nvm install --lts
+    # Install Node.js LTS
+    nvm install --lts
 
-# Check versions
-node -v
-npm -v
-```
+    # Check versions
+    node -v
+    npm -v
 
-## Step 4 — Docker
+Step 4 — Docker
 
-```bash
-# Install Docker
-sudo apt install docker.io -y
+    # Install Docker
+    sudo apt install docker.io -y
 
-# Check version
-docker --version
+    # Check version
+    docker --version
 
-# Start + enable Docker
-sudo systemctl start docker
-sudo systemctl enable docker
+    # Start + enable Docker
+    sudo systemctl start docker
+    sudo systemctl enable docker
 
-# Check Docker status
-sudo systemctl status docker
+    # Check Docker status
+    sudo systemctl status docker
 
-# Allow current user to use Docker
-sudo usermod -aG docker $USER
-newgrp docker
+    # Allow current user to use Docker
+    sudo usermod -aG docker $USER
+    newgrp docker
 
-# Test Docker
-docker run hello-world
-docker ps
-```
+    # Test Docker
+    docker run hello-world
+    docker ps
 
-## Step 5 — Docker Compose
+Step 5 — Docker Compose
 
-```bash
-# Install Docker Compose V2
-sudo apt update
-sudo apt install docker-compose-v2 -y
+    # Install Docker Compose V2
+    sudo apt update
+    sudo apt install docker-compose-v2 -y
 
-# Check version
-docker compose version
+    # Check version
+    docker compose version
 
-# Start Compose application
-docker compose up -d
+    # Start Compose application
+    docker compose up -d
 
-# Stop Compose application
-docker compose down
-```
+    # Stop Compose application
+    docker compose down
 
-## Step 6 — Java
+Step 6 — Java
 
-```bash
-# Install Java 21
-sudo apt install fontconfig openjdk-21-jre -y
+    # Install Java 21
+    sudo apt install fontconfig openjdk-21-jre -y
 
-# Check version
-java --version
-```
+    # Check version
+    java --version
 
-## Step 7 — Jenkins
+Step 7 — Jenkins
 
-```bash
-# Add Jenkins repository key
-sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
-https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+    # Add Jenkins repository key
+    sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+    https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
 
-# Add Jenkins repository
-echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
-https://pkg.jenkins.io/debian-stable binary/ | \
-sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+    # Add Jenkins repository
+    echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+    https://pkg.jenkins.io/debian-stable binary/ | \
+    sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
 
-# Install Jenkins
-sudo apt update
-sudo apt install jenkins -y
+    # Install Jenkins
+    sudo apt update
+    sudo apt install jenkins -y
 
-# Start + enable Jenkins
-sudo systemctl start jenkins
-sudo systemctl enable jenkins
+    # Start + enable Jenkins
+    sudo systemctl start jenkins
+    sudo systemctl enable jenkins
 
-# Check Jenkins
-sudo systemctl status jenkins
-jenkins --version
-```
+    # Check Jenkins
+    sudo systemctl status jenkins
+    jenkins --version
 
-## Step 8 — Jenkins Port 8080
+Step 8 — Jenkins Port 8080
 
-```text
-AWS EC2
-→ Security Group
-→ Inbound Rules
-→ TCP 8080
-```
+    AWS EC2
+    → Security Group
+    → Inbound Rules
+    → TCP 8080
 
 Open:
 
-```text
-http://EC2_PUBLIC_IP:8080
-```
+    http://EC2_PUBLIC_IP:8080
 
 Get initial password:
 
-```bash
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-```
+    sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
-## Step 9 — Jenkins + Docker Permission
+Step 9 — Jenkins + Docker Permission
 
-```bash
-# Add Jenkins to Docker group
-sudo usermod -aG docker jenkins
+    # Add Jenkins to Docker group
+    sudo usermod -aG docker jenkins
 
-# Restart Jenkins
-sudo systemctl restart jenkins
+    # Restart Jenkins
+    sudo systemctl restart jenkins
 
-# Test Docker access
-sudo -u jenkins docker ps
+    # Test Docker access
+    sudo -u jenkins docker ps
 
-# Test Compose access
-sudo -u jenkins docker compose version
-```
+    # Test Compose access
+    sudo -u jenkins docker compose version
 
-## Step 10 — GitHub SSH
+Step 10 — GitHub SSH
 
-```bash
-# Check existing SSH keys
-ls -la ~/.ssh
+    # Check existing SSH keys
+    ls -la ~/.ssh
 
-# Create SSH key
-ssh-keygen -t ed25519
+    # Create SSH key
+    ssh-keygen -t ed25519
 
-# Show public key
-cat ~/.ssh/id_ed25519.pub
-```
+    # Show public key
+    cat ~/.ssh/id_ed25519.pub
 
 Add public key:
 
-```text
-GitHub
-→ Settings
-→ SSH and GPG keys
-→ New SSH key
-```
+    GitHub
+    → Settings
+    → SSH and GPG keys
+    → New SSH key
 
 Test connection:
 
-```bash
-ssh -T git@github.com
-```
+    ssh -T git@github.com
 
-## Quick Verification
+Quick Verification
 
-```bash
-git --version
-node -v
-npm -v
-docker --version
-docker compose version
-java --version
-jenkins --version
-sudo -u jenkins docker ps
-ssh -T git@github.com
-```
+    git --version
+    node -v
+    npm -v
+    docker --version
+    docker compose version
+    java --version
+    jenkins --version
+    sudo -u jenkins docker ps
+    ssh -T git@github.com
 
-## CI/CD Flow
+CI/CD Flow
 
-```text
-GitHub
-   ↓
-Jenkins
-   ↓
-Build
-   ↓
-Test
-   ↓
-Docker Build
-   ↓
-Docker Hub
-   ↓
-Deploy on EC2
-```
+    GitHub
+       ↓
+    Jenkins
+       ↓
+    Build
+       ↓
+    Test
+       ↓
+    Docker Build
+       ↓
+    Docker Hub
+       ↓
+    Deploy on EC2
+
+Day 2 — Jenkins Pipeline Job
+
+Step 1 — Create New Jenkins Item
+
+    Jenkins Dashboard
+    → New Item
+    → ExpenseTracker-CICD
+    → Select item type: Pipeline
+    → OK
+
+Step 2 — Configure GitHub Project
+
+Inside the Jenkins job:
+
+    General
+    → GitHub project
+
+Repository:
+
+    https://github.com/ankittripathidevs/two-tier-flask-app.git
+
+Step 3 — Pipeline Script
+
+Go to:
+
+    Pipeline
+    → Definition: Pipeline script
+
+Example pipeline:
+
+    pipeline {
+
+        agent any
+
+        stages {
+
+            // =========================
+            // 1. Clone Source Code
+            // =========================
+            stage('Code Clone') {
+                steps {
+                    echo 'Cloning code from GitHub'
+
+                    git branch: 'main',
+                        url: 'https://github.com/ankittripathidevs/Expenses-Tracker-WebApp.git'
+                }
+            }
+
+            // =========================
+            // 2. Build Docker Image
+            // =========================
+            stage('Build') {
+                steps {
+                    echo 'Building Docker image'
+
+                    sh 'docker build -t expenses-tracker-app .'
+                }
+            }
+
+            // =========================
+            // 3. Test
+            // =========================
+            stage('Test') {
+                steps {
+                    echo 'Testing the application'
+
+                    // Add real tests here later
+                }
+            }
+
+            // =========================
+            // 4. Login + Push to Docker Hub
+            // =========================
+            stage('Push to Docker Hub') {
+                steps {
+
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: "DockerHub_Credentials",
+                            usernameVariable: "DockerHub_User",
+                            passwordVariable: "DockerHub_Pass"
+                        )
+                    ]) {
+
+                        echo 'Logging in to Docker Hub'
+
+                        sh '''
+                            echo "$DockerHub_Pass" | docker login \
+                            -u "$DockerHub_User" --password-stdin
+                        '''
+
+                        echo 'Tagging Docker image'
+
+                        sh '''
+                            docker image tag expenses-tracker-app:latest \
+                            "$DockerHub_User"/expenses-tracker:latest
+                        '''
+
+                        echo 'Pushing Docker image'
+
+                        sh '''
+                            docker push \
+                            "$DockerHub_User"/expenses-tracker:latest
+                        '''
+                    }
+                }
+            }
+
+            // =========================
+            // 5. Deploy
+            // =========================
+            stage('Deploy') {
+                steps {
+                    echo 'Deploying application'
+
+                    sh 'docker compose up -d --build'
+                }
+            }
+        }
+    }
+
+Click:
+
+    Save
+
+Step 4 — Build Now
+
+    Jenkins
+    → ExpenseTracker-CICD
+    → Build Now
+    → Build #
+    → Console Output
+
+If Jenkins reports a Docker permission error:
+
+    sudo usermod -aG docker jenkins
+    sudo systemctl restart jenkins
+
+Verify:
+
+    sudo -u jenkins docker ps
+
+Then run Build Now again.
+
+Step 5 — Docker Hub Personal Access Token
+
+Go to Docker Hub:
+
+    Docker Hub
+    → Account Settings
+    → Personal access tokens
+    → Create / Generate access token
+
+Copy the token.
+
+Do not put the token directly inside the Jenkinsfile.
+
+Step 6 — Add Docker Hub Credentials to Jenkins
+
+Go to:
+
+    Jenkins
+    → Manage Jenkins
+    → Credentials
+    → System
+    → Global credentials
+    → Add Credentials
+
+Select:
+
+    Kind: Username with password
+
+Enter:
+
+    Username: ankittripathidocker
+    Password: <Docker Hub Personal Access Token>
+    ID: DockerHub_Credentials
+
+Click:
+
+    Create
+
+The pipeline uses this credential here:
+
+    withCredentials([
+        usernamePassword(
+            credentialsId: "DockerHub_Credentials",
+            usernameVariable: "DockerHub_User",
+            passwordVariable: "DockerHub_Pass"
+        )
+    ])
+
+Step 7 — Automate Jenkins with GitHub Webhook
+
+Instead of manually clicking Build Now, configure a GitHub webhook.
+
+In Jenkins:
+
+    ExpenseTracker-CICD
+    → Configure
+    → Build Triggers
+    → Check:
+       GitHub hook trigger for GITScm polling
+    → Save
+
+Then go to GitHub:
+
+    GitHub Repository
+    → Settings
+    → Webhooks
+    → Add webhook
+
+Payload URL:
+
+    http://EC2_PUBLIC_IP:8080/github-webhook/
+
+Content type:
+
+    application/json
+
+Select:
+
+    Just the push event
+
+SSL verification:
+
+    Only disable SSL verification if your Jenkins endpoint is not configured for HTTPS.
+    For a production setup, prefer HTTPS.
+
+Click:
+
+    Add webhook
+
+Automated Flow
+
+    Developer
+       ↓
+    git push
+       ↓
+    GitHub
+       ↓
+    GitHub Webhook
+       ↓
+    Jenkins
+       ↓
+    Code Clone
+       ↓
+    Docker Build
+       ↓
+    Test
+       ↓
+    Docker Hub
+       ↓
+    Deploy on EC2
+
+Step 8 — Use Jenkinsfile from GitHub
+
+Instead of keeping the pipeline script inside Jenkins, create a file
+named:
+
+    Jenkinsfile
+
+at the root of the GitHub repository.
+
+Example:
+
+    two-tier-flask-app/
+    ├── Jenkinsfile
+    ├── Dockerfile
+    ├── docker-compose.yml
+    ├── requirements.txt
+    └── ...
+
+Then configure Jenkins:
+
+    Jenkins
+    → ExpenseTracker-CICD
+    → Configure
+    → Pipeline
+
+Change:
+
+    Definition:
+    Pipeline script
+
+to:
+
+    Pipeline script from SCM
+
+Select:
+
+    SCM: Git
+
+Repository URL:
+
+    https://github.com/ankittripathidevs/two-tier-flask-app.git
+
+Branch:
+
+    */main
+
+Then:
+
+    Save
+    → Build Now
+
+Jenkins will now read the pipeline directly from the Jenkinsfile in
+GitHub.
+
+Final Jenkins Architecture
+
+                     GitHub
+                       │
+                       │ Push
+                       ▼
+                  Webhook
+                       │
+                       ▼
+                    Jenkins
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+          Code Clone        Jenkinsfile
+              │
+              ▼
+           Docker Build
+              │
+              ▼
+             Test
+              │
+              ▼
+          Docker Login
+              │
+              ▼
+           Docker Hub
+              │
+              ▼
+         Deploy on EC2
+              │
+              ▼
+         Docker Compose
+
+Important Notes
+
+-   DockerHub_Credentials is the Jenkins credential ID, not the Docker
+    Hub password.
+-   Use a Docker Hub Personal Access Token as the password.
+-   Never hard-code the Docker Hub token inside the Jenkinsfile.
+-   Jenkins needs permission to access Docker through the docker group.
+-   */main is the Jenkins SCM branch specifier for the main branch.
+-   A GitHub webhook triggers Jenkins after a push; it does not itself
+    deploy code.
+-   docker compose up -d --build only works if the deployment server has
+    the required docker-compose.yml and application files available in
+    the Jenkins workspace.
+-   For production, expose Jenkins through HTTPS rather than an
+    unsecured public HTTP endpoint.

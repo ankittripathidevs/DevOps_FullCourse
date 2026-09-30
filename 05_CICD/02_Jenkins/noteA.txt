@@ -1,0 +1,59 @@
+Day:1 First Job
+
+## Steps:
+- New-item
+  Enter an item name: FirstJob
+  Select an item type: FreeStyle Project
+  Description: This is my first Job
+  Discard Old builds:
+
+  Build Steps:
+     Execute shell
+
+ echo "Hello Dosto"
+ echo "Hello Ji Kaise Ho Sare"> /var/lib/jenkins/workspace/first_job.txt
+ cat /var/lib/jenkins/workspace/first_job.txt
+ bash /var/lib/jenkins/workspace/basic.sh  
+ # (create basic.sh at the same location first)
+
+ Save:
+ Build Now
+ check console output
+
+************************************************************************************
+Day:2 Parameterize CICD
+
+## Steps:
+  Enetr an item name: ParamatrizeType-CICD
+  Select an item type: FreeStyle Project
+  Description: This is my paramatrize Type Job
+  Discard Old Builds: 
+
+# This project is parameterized
+ String Parameter
+ Name: FULL_NAME
+ DefaultValue: Ankit Tripathi
+ Description: This is my string parameter
+
+ Choice Parameter
+ Name: SEx
+ Choices: 
+  MALE
+  FEMALE
+  OTHERS
+ Description: This is choice parameter
+
+ # Chron job Schedule
+ # Triggers
+  Build Periodically
+  Schedule
+   */10 * * * * (build every 10 min automatically)
+
+ # Builds
+ execute hell
+
+echo "hello $FULL_NAME, $SEX"
+
+
+
+

@@ -259,6 +259,102 @@ Save → Build with Parameters → Enter values → Build → Console Output
 ```
 
 ---
+# =========================
+
+# -------- Day-4 ----------
+
+# =========================
+
+## Project: Git-CICD
+
+### New Item
+
+```text
+Jenkins Dashboard → New Item
+```
+
+```text
+Item Name: Git-CICD
+Project Type: Freestyle Project
+```
+
+Click **OK**.
+
+### General
+
+```text
+Description:
+Git CI/CD Project
+```
+
+Optional:
+
+```text
+Discard old builds
+```
+
+---
+
+## Source Code Management
+
+Select:
+
+```text
+Source Code Management → Git
+```
+
+### Repository
+
+```text
+Repository URL:
+https://github.com/ankittripathidevs/Javascript-test.git
+```
+
+```text
+Credentials:
+- none -
+```
+
+### Branch
+
+```text
+Branch Specifier:
+*/main
+```
+
+---
+
+## Build Steps
+
+Go to:
+
+```text
+Build
+→ Add build step
+→ Execute shell
+```
+
+Add:
+
+```bash
+echo "Hello"
+
+node app.js
+```
+
+---
+
+## Run
+
+```text
+Save
+→ Build Now
+→ Build #
+→ Console Output
+```
+---
+
+
 
 # =========================
 

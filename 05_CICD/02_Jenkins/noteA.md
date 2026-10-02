@@ -355,6 +355,209 @@ Save
 ---
 
 
+# =========================
+
+# -------- Day-5 ----------
+
+# =========================
+
+## Project: Git-CICD
+
+### Topic: Poll SCM
+
+**Poll SCM = Poll Source Code Management**
+
+Jenkins periodically checks the Git repository at a scheduled interval for new changes.
+
+---
+
+## Source Code Management
+
+Go to:
+
+```text
+Jenkins Job
+→ Configure
+→ Source Code Management
+```
+
+Select:
+
+```text
+Git
+```
+
+### Repository
+
+```text
+Repository URL:
+
+https://github.com/ankittripathidevs/Javascript-test.git
+```
+
+### Credentials
+
+```text
+- none -
+```
+
+### Branch
+
+```text
+Branch Specifier:
+
+*/main
+```
+
+### Repository Browser
+
+```text
+(Auto)
+```
+
+### Additional Behaviours
+
+```text
+No additional behaviour
+```
+
+---
+
+## Build Trigger — Poll SCM
+
+Go to:
+
+```text
+Configure
+→ Build Triggers
+→ Poll SCM
+```
+
+Enable:
+
+```text
+Poll SCM
+```
+
+### Schedule
+
+Example:
+
+```text
+*/1 * * * *
+```
+
+Checks the Git repository every **1 minute**.
+
+Another example:
+
+```text
+H/2 * * * *
+```
+
+Checks approximately every **2 minutes**, with Jenkins choosing the starting minute.
+
+---
+
+## Build Step
+
+Go to:
+
+```text
+Build
+→ Add build step
+→ Execute shell
+```
+
+```bash
+node app.js
+```
+
+---
+
+## How It Works
+
+```text
+GitHub Repository
+       ↓
+Jenkins Poll SCM
+       ↓
+Check for changes
+       ↓
+Changes found?
+       ↓
+      YES
+       ↓
+Start Build
+       ↓
+Execute Shell
+       ↓
+node app.js
+```
+
+If there are **no changes**, Jenkins does not start a new build.
+
+---
+
+## Build periodically vs Poll SCM
+
+### Build periodically
+
+```text
+Runs the Jenkins job according to the schedule.
+Git changes are not required.
+```
+
+### Poll SCM
+
+```text
+Checks the Git repository according to the schedule.
+Build starts when Jenkins detects changes.
+```
+
+### GitHub Webhook
+
+```text
+GitHub detects push
+       ↓
+Webhook → Jenkins
+       ↓
+Build starts
+```
+
+---
+
+## Run
+
+```text
+Save
+→ Make a change in GitHub
+→ Wait for Poll SCM
+→ Jenkins detects change
+→ Build starts
+→ Console Output
+```
+
+---
+
+## Day-5 Learning
+
+```text
+Git Repository
+      ↓
+Source Code Management
+      ↓
+Git + Branch
+      ↓
+Poll SCM
+      ↓
+Detect Changes
+      ↓
+Automatic Build
+```
+---
+
+
 
 # =========================
 

@@ -558,6 +558,317 @@ Automatic Build
 ---
 
 
+# =========================
+
+# -------- Day-6 ----------
+
+# =========================
+
+## Project: Git-CICD
+
+### Topic: E-mail Notification
+
+Configure Jenkins to send an e-mail when a build **fails, becomes unstable, or returns to stable**.
+
+---
+
+## 1. Create Gmail App Password
+
+Go to your **Google Account**.
+
+```text
+Google Account
+→ 2-Step Verification
+→ App Passwords
+```
+
+Search:
+
+```text
+App password
+```
+
+Create a new app-specific password.
+
+### App Name
+
+```text
+jenkins
+```
+
+After creating it:
+
+```text
+Copy the generated App Password immediately.
+```
+
+> The generated password may not be shown again.
+
+---
+
+# 2. Jenkins E-mail Configuration
+
+Go to:
+
+```text
+Manage Jenkins
+→ System
+→ E-mail Notification
+```
+
+### SMTP Configuration
+
+```text
+SMTP server:
+smtp.gmail.com
+```
+
+```text
+Default user e-mail suffix:
+@jenkinstest.com
+```
+
+### Advanced
+
+Enable:
+
+```text
+Use SMTP Authentication
+```
+
+Username:
+
+```text
+ankittripathi.jet@gmail.com
+```
+
+Password:
+
+```text
+<Your Gmail App Password> (Immediately copy password)
+```
+
+### Security
+
+Enable:
+
+```text
+Use SSL
+```
+
+SMTP Port:
+
+```text
+465
+```
+
+Charset:
+
+```text
+UTF-8
+```
+
+---
+
+## 3. Test E-mail
+
+Under:
+
+```text
+E-mail Notification
+→ Test configuration by sending test e-mail
+```
+
+Test recipient:
+
+```text
+ankittripathi2k24@gmail.com
+```
+
+Click:
+
+```text
+Test configuration
+```
+
+Expected:
+
+```text
+Email was successfully sent
+```
+
+Then:
+
+```text
+Save → Apply
+```
+
+---
+
+# 4. Git-CICD Project Configuration
+
+Open:
+
+```text
+Git-CICD
+→ Configure
+```
+
+### General
+
+Description:
+
+```text
+This pull a code from Github
+```
+
+### Source Code Management
+
+Select:
+
+```text
+Git
+```
+
+Repository:
+
+```text
+https://github.com/ankittripathidevs/Javascript-test.git
+```
+
+Credentials:
+
+```text
+- none -
+```
+
+Branch:
+
+```text
+*/main
+```
+
+Repository Browser:
+
+```text
+(Auto)
+```
+
+---
+
+# 5. Poll SCM
+
+Go to:
+
+```text
+Build Triggers
+→ Poll SCM
+```
+
+Schedule:
+
+```text
+*/1 * * * *
+```
+
+Checks the Git repository every **1 minute**.
+
+---
+
+# 6. Build Step
+
+Go to:
+
+```text
+Build
+→ Execute shell
+```
+
+```bash
+node app.js
+```
+
+---
+
+# 7. Post-build E-mail Notification
+
+Go to:
+
+```text
+Post-build Actions
+→ E-mail Notification
+```
+
+### Recipients
+
+```text
+ankittripathi2k24@gmail.com
+```
+
+### E-mail Behavior
+
+Jenkins sends the e-mail when the build:
+
+```text
+Fails
+Becomes unstable
+Returns to stable
+```
+
+Optional:
+
+```text
+Send e-mail for every unstable build
+```
+
+```text
+Send separate e-mails to individuals who broke the build
+```
+
+---
+
+## 8. Final Configuration Flow
+
+```text
+GitHub
+   ↓
+Poll SCM
+   ↓
+Jenkins detects change
+   ↓
+Git checkout
+   ↓
+node app.js
+   ↓
+Build result
+   ↓
+E-mail Notification
+   ↓
+Gmail
+```
+
+---
+
+## Day-6 Learning
+
+```text
+Gmail App Password
+        ↓
+Jenkins SMTP
+        ↓
+smtp.gmail.com
+        ↓
+SMTP Authentication
+        ↓
+SSL + Port 465
+        ↓
+Test E-mail
+        ↓
+Post-build E-mail
+```
+---
+
+
 
 # =========================
 

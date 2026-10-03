@@ -6,9 +6,7 @@
 ---
 
 # =========================
-
 # -------- Day-1 ----------
-
 # =========================
 
 ## Project: FirstJob
@@ -1210,79 +1208,4 @@ Permissions:
     View/Read
 ```
 
-
-# =========================
-
-# ----- Useful Commands ----
-
-# =========================
-
-### Jenkins
-
-```bash
-sudo systemctl status jenkins
-sudo systemctl start jenkins
-sudo systemctl restart jenkins
-```
-
-### Workspace
-
-```bash
-ls -lah /var/lib/jenkins/workspace/
-```
-
-### Jenkins User
-
-```bash
-whoami
-```
-
-### Node.js
-
-```bash
-node -v
-npm -v
-```
-
-### Git
-
-```bash
-git --version
-```
-
 ---
-
-# -------- Learning Flow --------
-
-```text
-Day-1 → First Jenkins Job
-          ↓
-Day-2 → Parameters
-          ↓
-Day-3 → Cron Job
-          ↓
-Day-4 → Git + Jenkins
-          ↓
-Day-5 → GitHub Webhook
-          ↓
-Day-6 → Jenkins Pipeline
-          ↓
-Day-7 → Jenkinsfile + Docker
-```
-
-# Quick Reference
-
-| Day   | Project                | Topic                |
-| ----- | ---------------------- | -------------------- |
-| Day-1 | `FirstJob`             | Freestyle + Shell    |
-| Day-2 | `ParamatrizeType-CICD` | Parameters           |
-| Day-3 | `CronJob-CICD`         | Cron + Parameters    |
-| Day-4 | `Git-demo-CICD`        | Git + Jenkins        |
-| Day-5 | —                      | GitHub Webhook       |
-| Day-6 | —                      | Pipeline             |
-| Day-7 | —                      | Jenkinsfile + Docker |
-
-```
-```
-
-

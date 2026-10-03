@@ -41,7 +41,7 @@ Strategy: Log Rotation
 On EC2:
 
 ```bash
-sudo nano /var/lib/jenkins/workspace/basic.sh
+sudo vim /var/lib/jenkins/workspace/basic.sh
 ```
 
 ```bash

@@ -1209,3 +1209,76 @@ Permissions:
 ```
 
 ---
+
+# =========================
+# -------- Day-8 ----------
+# =========================
+
+## Topic: Custom Environment Variable
+
+### 1. Configure Global Environment Variable
+
+Go to:
+
+```text
+Manage Jenkins
+→ System
+→ Global Properties
+```
+
+Enable:
+
+```text
+Environment variables
+```
+
+Add:
+
+```text
+Name: OS
+Value: Linux (Ubuntu)
+```
+
+Click **Save**.
+
+---
+
+## 2. Access Environment Variable
+
+The environment variable is now **globally accessible** to Jenkins jobs.
+
+Create a new project:
+
+```text
+New Item
+→ Freestyle Project
+```
+
+### Build Step
+
+Go to:
+
+```text
+Build Steps
+→ Execute shell
+```
+
+Add:
+
+```bash
+echo $LOGIN_USER
+echo "$OS"
+```
+
+### Run
+
+```text
+Save
+→ Build Now
+→ Build #
+→ Console Output
+```
+
+The value of `$OS` will be available to the Jenkins job.
+
+---

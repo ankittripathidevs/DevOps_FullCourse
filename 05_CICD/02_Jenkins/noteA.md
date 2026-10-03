@@ -670,6 +670,9 @@ UTF-8
 
 ---
 
+ ## Do not forget to allow from inbound rule SMPTS port 465
+
+
 ## 3. Test E-mail
 
 Under:

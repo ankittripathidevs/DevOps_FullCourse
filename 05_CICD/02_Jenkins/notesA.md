@@ -1235,8 +1235,10 @@ Environment variables
 Add:
 
 ```text
+Name: LOGIN_USER
+Value: Ankit(admin)
 Name: OS
-Value: Linux (Ubuntu)
+Value: Linux (ubuntu)
 ```
 
 Click **Save**.

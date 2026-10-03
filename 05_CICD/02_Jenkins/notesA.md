@@ -873,6 +873,344 @@ Post-build E-mail
 
 
 
+
+# =========================
+
+# -------- Day-7 ----------
+
+# =========================
+
+## Topic: Role Based Authorization Strategy
+
+### 1. Create a New User
+
+Login with Jenkins Admin.
+
+Go to:
+
+```text
+Manage Jenkins
+→ Users
+→ Create User
+```
+
+Example:
+
+```text
+Username: dhoni
+Password: ********
+Name: Dhoni
+Email: ********
+```
+
+Click **Create User**.
+
+
+---
+
+## 2. Install Role Based Authorization Strategy Plugin
+
+Go to:
+
+```text
+Manage Jenkins
+→ Plugins
+→ Available plugins
+```
+
+Search:
+
+```text
+Role-Based Authorization Strategy
+```
+
+Install the plugin.
+
+
+---
+
+## 3. Enable Role Based Authorization Strategy
+
+Go to:
+
+```text
+Manage Jenkins
+→ Security
+→ Authorization
+```
+
+Select:
+
+```text
+Role-Based Strategy
+```
+
+Click:
+
+```text
+Save
+```
+
+
+---
+
+## 4. Test New User
+
+Logout from Jenkins.
+
+Login with the newly created user:
+
+```text
+Username: dhoni
+Password: ********
+```
+
+You will see:
+
+```text
+Access Denied
+
+dhoni is missing the Overall/Read permission.
+```
+
+### Reason:
+
+The user has been created, but no role has been assigned to the user yet.
+
+
+---
+
+## 5. Login Back with Admin
+
+Logout from `dhoni`.
+
+Login again with:
+
+```text
+Username: admin
+```
+
+Go to:
+
+```text
+Manage Jenkins
+→ Role Management
+```
+
+
+---
+
+## 6. Manage Roles
+
+Go to:
+
+```text
+Manage Jenkins
+→ Role Management
+→ Manage Roles
+```
+
+Click:
+
+```text
+Add Role
+```
+
+Example Role Names:
+
+```text
+Trainee
+Developer
+Intern
+Read-Only
+```
+
+For this example:
+
+```text
+Role Name: Trainee
+```
+
+
+---
+
+## 7. Give Permissions
+
+Select the permissions according to the requirement.
+
+Example:
+
+```text
+Overall:
+    ☑ Read
+
+Job:
+    ☑ Read
+    ☑ Build
+
+View:
+    ☑ Read
+```
+
+Do not give unnecessary permissions.
+
+Example:
+
+```text
+Overall/Administer    ❌
+Job/Delete            ❌
+Job/Configure         ❌
+```
+
+
+---
+
+## 8. Assign Role to User
+
+Go to:
+
+```text
+Manage Jenkins
+→ Role Management
+→ Assign Roles
+```
+
+Select:
+
+```text
+Global roles
+```
+
+Click:
+
+```text
+Add User or Group
+```
+
+Enter:
+
+```text
+User ID: dhoni
+```
+
+Add the user.
+
+Assign:
+
+```text
+dhoni → Trainee
+```
+
+Click:
+
+```text
+Save
+```
+
+
+---
+
+## 9. Test User Permissions
+
+Logout from Admin.
+
+Login with:
+
+```text
+Username: dhoni
+Password: ********
+```
+
+Now `dhoni` will have the custom permissions
+defined in the `Trainee` role.
+
+Example:
+
+```text
+Login Jenkins       ✓
+Read Jenkins        ✓
+Read Job            ✓
+Build Job           ✓
+
+Manage Jenkins      ✗
+Delete Job           ✗
+Configure Job        ✗
+Administer Jenkins  ✗
+```
+
+
+---
+
+## RBAC Concept
+
+```text
+User
+  ↓
+Role
+  ↓
+Permissions
+```
+
+Example:
+
+```text
+dhoni
+  ↓
+Trainee
+  ↓
+Overall/Read
+Job/Read
+Job/Build
+View/Read
+```
+
+
+## Day-7 Learning
+
+```text
+Create User
+     ↓
+Install Role Based Authorization Strategy
+     ↓
+Enable Role Based Strategy
+     ↓
+Create Role
+     ↓
+Give Permissions
+     ↓
+Assign Role to User
+     ↓
+Login with User
+     ↓
+User gets Custom Permissions
+```
+
+---
+
+## Important
+
+Creating a user does **not** automatically give
+the user Jenkins permissions.
+
+The permissions are controlled through roles.
+
+```text
+User ≠ Role ≠ Permission
+
+User:
+    dhoni
+
+Role:
+    Trainee
+
+Permissions:
+    Overall/Read
+    Job/Read
+    Job/Build
+    View/Read
+```
+
+
 # =========================
 
 # ----- Useful Commands ----
@@ -946,4 +1284,5 @@ Day-7 → Jenkinsfile + Docker
 
 ```
 ```
+
 

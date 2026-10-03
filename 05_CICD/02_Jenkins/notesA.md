@@ -1,7 +1,7 @@
 # Jenkins Notes
 
-**EC2 Workspace:** `/var/lib/jenkins/workspace/`
-**GitHub Repo:** `https://github.com/ankittripathidevs/Javascript-test.git`
+- **EC2 Workspace:** `/var/lib/jenkins/workspace/`
+- **GitHub Repo:** `https://github.com/ankittripathidevs/Javascript-test.git`
 
 ---
 

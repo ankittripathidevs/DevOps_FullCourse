@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        NAME = "Ankit"
+        AGE = "26"
+        PASS = credentials("PASSWORD")
+    }
+
+    stages {
+
+        stage('Build') {
+            steps {
+                sh '''
+                    echo "Hello"
+                    echo $NAME
+                    echo $AGE
+                '''
+
+                retry(3) {
+                    sh "echo Trying...."
+                }
+            }
+        }
+
+        stage("Credentials Check") {
+            steps {
+                sh '''
+                    echo "Credential is available"
+                    echo "$PASS"
+                '''
+            }
+        }
+    }
+}

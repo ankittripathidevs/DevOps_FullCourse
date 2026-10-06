@@ -22,17 +22,10 @@ Step 2 — Git
 
 Step 3 — Node.js + npm (LTS)
 
-    # Install curl
-    sudo apt install curl -y
+    # latest Node.js LTS
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install -y nodejs
 
-    # Install NVM
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-
-    # Reload shell
-    source ~/.bashrc
-
-    # Install Node.js LTS
-    nvm install --lts
 
     # Check versions
     node -v

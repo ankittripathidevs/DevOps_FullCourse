@@ -194,3 +194,109 @@ npm -v
 ```
 
 ---
+
+------------------------------------------------------------------------
+
+## Step 8 --- Connect GitHub to EC2 for Project Cloning
+
+Configure SSH authentication between the EC2 instance and GitHub.
+
+This allows the EC2 server to clone private GitHub repositories using
+SSH.
+
+### Check Existing SSH Keys
+
+``` bash
+ls -la ~/.ssh
+```
+
+If an existing SSH key is already available, you can use it. Otherwise,
+create a new SSH key.
+
+### Create SSH Key
+
+``` bash
+ssh-keygen -t ed25519
+```
+
+Press **Enter** to accept the default file location.
+
+You can optionally configure a passphrase for additional security.
+
+### Show Public Key
+
+``` bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Copy the complete public key.
+
+### Add Public Key to GitHub
+
+Go to:
+
+``` text
+GitHub
+    ↓
+Settings
+    ↓
+SSH and GPG keys
+    ↓
+New SSH key
+```
+
+Add the copied public key.
+
+``` text
+Title: EC2-Jenkins
+Key type: Authentication Key
+Key: <Paste your public SSH key>
+```
+
+Click **Add SSH key**.
+
+### Test GitHub SSH Connection
+
+Run:
+
+``` bash
+ssh -T git@github.com
+```
+
+The first time, you may see a message asking whether you want to
+continue connecting.
+
+Type:
+
+``` text
+yes
+```
+
+A successful connection will show a message similar to:
+
+``` text
+Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+### Clone a GitHub Project Using SSH
+
+Use the SSH repository URL:
+
+``` bash
+git clone git@github.com:USERNAME/REPOSITORY.git
+```
+
+Example:
+
+``` bash
+git clone git@github.com:ankittripathidevs/my-project.git
+```
+
+Check the cloned project:
+
+``` bash
+ls
+```
+
+------------------------------------------------------------------------
+

@@ -796,7 +796,7 @@ Gmail
 
 # =========================
 
-## Topic: Role Based Authorization Strategy
+## Topic: Role-Based Access Control (RBAC)
 
 ### 1. Create a New User
 

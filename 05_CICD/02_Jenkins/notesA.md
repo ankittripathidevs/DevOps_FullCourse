@@ -517,8 +517,7 @@ Go to your **Google Account**.
 
 ```text
 Google Account
-→ 2-Step Verification
-→ App Passwords
+→ Enable 2-Step Verification
 ```
 
 Search:

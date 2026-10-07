@@ -790,28 +790,6 @@ Gmail
 
 ---
 
-## Day-6 Learning
-
-```text
-Gmail App Password
-        ↓
-Jenkins SMTP
-        ↓
-smtp.gmail.com
-        ↓
-SMTP Authentication
-        ↓
-SSL + Port 465
-        ↓
-Test E-mail
-        ↓
-Post-build E-mail
-```
----
-
-
-
-
 # =========================
 
 # -------- Day-7 ----------

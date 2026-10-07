@@ -116,13 +116,13 @@ Example:
 Build #1
 ```
 
-Click the build number:
+Click:
 
 ```text
 #1
 ```
 
-Then select:
+Then:
 
 ```text
 Console Output
@@ -131,10 +131,6 @@ Console Output
 ---
 
 **### Step 5 — Check Console Output**
-
-The console output should show the different pipeline stages.
-
-Example:
 
 ```text
 [Pipeline] Start of Pipeline
@@ -163,8 +159,6 @@ Finished: SUCCESS
 
 **### Step 6 — Understand the Pipeline**
 
-The basic Jenkins Declarative Pipeline structure is:
-
 ```text
 pipeline
     ↓
@@ -181,7 +175,51 @@ steps
 
 **### Demo-Pipeline - 2**
 
-**#### Jenkins Credentials**
+**#### Step 1 — Configure Global Environment Variables**
+
+Go to:
+
+```text
+Jenkins Dashboard
+      ↓
+Manage Jenkins
+      ↓
+System
+      ↓
+Global properties
+      ↓
+Environment variables
+```
+
+Enable:
+
+```text
+Environment variables
+```
+
+Add:
+
+```text
+Name: NAME
+Value: Ankit
+```
+
+Add:
+
+```text
+Name: AGE
+Value: 26
+```
+
+Click:
+
+```text
+Save
+```
+
+---
+
+**#### Step 2 — Configure Jenkins Secret Credential**
 
 Go to:
 
@@ -221,7 +259,7 @@ Save
 
 ---
 
-**#### Pipeline Script**
+**#### Step 3 — Pipeline Script**
 
 ```groovy
 pipeline {
@@ -229,8 +267,6 @@ pipeline {
     agent any
 
     environment {
-        NAME = "Ankit"
-        AGE = "26"
         PASS = credentials("PASSWD")
     }
 
@@ -260,7 +296,7 @@ pipeline {
 
 ---
 
-**#### Build Pipeline**
+**#### Step 4 — Build Pipeline**
 
 ```text
 Save
@@ -268,4 +304,28 @@ Save
 Build Now
   ↓
 Console Output
+```
+
+---
+
+**## Final Result**
+
+```text
+Demo-Pipeline - 1
+Build → Test → Deploy
+```
+
+```text
+Demo-Pipeline - 2
+
+Global Environment Variables
+        ↓
+NAME = Ankit
+AGE = 26
+        ↓
+Jenkins Credentials
+        ↓
+PASSWD
+        ↓
+Pipeline
 ```

@@ -503,7 +503,7 @@ If there are **no changes**, Jenkins does not start a new build.
 
 # =========================
 
-## Project: Git-CICD
+## Project: Email Notification When Build Fails or Success
 
 ### Topic: E-mail Notification
 

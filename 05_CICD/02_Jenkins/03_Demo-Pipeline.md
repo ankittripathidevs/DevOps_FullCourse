@@ -1,10 +1,10 @@
 # Jenkins Demo Pipeline
 
 **============================================**  
-**## Day-3: Create Jenkins Demo Pipeline**  
+** Day-3: Create Jenkins Demo Pipeline**  
 **============================================**
 
-**### Step 1 — Create a New Pipeline Job**
+** Step 1 — Create a New Pipeline Job**
 
 Open Jenkins Dashboard.
 

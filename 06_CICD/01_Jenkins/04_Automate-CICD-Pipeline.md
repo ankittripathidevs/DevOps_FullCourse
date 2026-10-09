@@ -482,3 +482,136 @@ Deploy Application on EC2
 ```
 
 ---
+
+
+===========================================
+# Task-4 — Use Jenkinsfile from GitHub
+============================================
+
+Instead of keeping the pipeline script inside Jenkins, create a file named `Jenkinsfile` at the root of the GitHub repository.
+
+This keeps the pipeline definition alongside the application code and allows you to track pipeline changes using Git.
+
+## Step 1 — Create a Jenkinsfile
+
+Create a file named exactly:
+
+```text
+Jenkinsfile
+```
+
+Place it in the repository root:
+
+```text
+two-tier-flask-app/
+├── Jenkinsfile
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── ...
+```
+
+Add your Declarative Pipeline code to the file, then commit and push it to GitHub.
+
+Repository:
+
+```text
+https://github.com/ankittripathidevs/two-tier-flask-app.git
+```
+
+> The filename is case-sensitive. Use `Jenkinsfile` without an extension such as `.txt`.
+
+## Step 2 — Configure Jenkins to Read the Jenkinsfile
+
+Open the Jenkins job:
+
+```text
+Jenkins
+    ↓
+Two-Tier-Flask-App
+    ↓
+Configure
+    ↓
+Pipeline
+```
+
+Change:
+
+```text
+From: Pipeline script
+To:   Pipeline script from SCM
+```
+
+Configure:
+
+```text
+SCM:               Git
+Repository URL:    https://github.com/ankittripathidevs/two-tier-flask-app.git
+Branch Specifier:  */main
+Script Path:       Jenkinsfile
+```
+
+If the repository is private, configure suitable Git credentials in Jenkins.
+
+Click:
+
+```text
+Save
+    ↓
+Build Now
+```
+
+Jenkins will check out the repository and read the pipeline definition from the `Jenkinsfile` located at Github.
+
+
+## Final Jenkins Architecture
+
+```text
+                    Developer
+                        |
+                      git push
+                        |
+                        v
+                     GitHub
+                        |
+                     Webhook
+                        |
+                        v
+                     Jenkins
+                        |
+             Pipeline script from SCM
+                        |
+                        v
+                    Jenkinsfile
+                        |
+                        v
+                   Docker Build
+                        |
+                        v
+                       Test
+                        |
+                        v
+                   Docker Login
+                        |
+                        v
+                    Docker Hub
+                        |
+                        v
+                  Deploy on EC2
+                        |
+                        v
+                  Docker Compose
+```
+
+## Important Notes
+
+- `DockerHub_Credentials` is the Jenkins credential ID, not the Docker Hub password.
+- Use a Docker Hub Personal Access Token as the credential password.
+- `*/main` is the Jenkins SCM branch specifier for the `main` branch.
+- A GitHub webhook triggers Jenkins after a push; the webhook does not itself deploy the code.
+- Jenkins checks out the repository to load the Jenkinsfile, so a separate checkout stage may be redundant.
+- `docker compose up -d --build` requires the Compose file and application files to be available in the current working directory.
+- If deployment should use the image pushed to Docker Hub, configure Compose to pull that image and use a deliberate image tag. The `--build` option builds locally instead of relying solely on the pushed image.
+- For production, expose Jenkins through HTTPS, restrict access, and use traceable image tags.
+
+---

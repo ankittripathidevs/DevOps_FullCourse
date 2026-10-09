@@ -484,9 +484,9 @@ Deploy Application on EC2
 ---
 
 
-===========================================
+==========================================================
 # Task-4 — Use Jenkinsfile from GitHub
-============================================
+===========================================================
 
 Instead of keeping the pipeline script inside Jenkins, create a file named `Jenkinsfile` at the root of the GitHub repository.
 

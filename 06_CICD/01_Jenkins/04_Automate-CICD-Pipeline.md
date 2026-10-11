@@ -1,7 +1,5 @@
 =======================================================
-
 ## Day-4: CI/CD Pipeline with Jenkins + Docker
-
 =======================================================
 
 ### Overview
@@ -26,9 +24,7 @@ GitHub → Jenkins → Docker Build → Test → Docker Hub → Deploy on EC2
 ---
 
 ========================================================================
-
 # Task-1 --- Install Docker and Docker Compose
-
 ========================================================================
 
 ## Step 1 --- Install Docker
@@ -119,9 +115,7 @@ sudo -u jenkins docker compose version
 ---
 
 ========================================================================
-
 # Task-2 --- Create the Jenkins CI/CD Pipeline
-
 ========================================================================
 
 ## Step 1 --- Create a New Jenkins Item
@@ -356,9 +350,7 @@ withCredentials([
 ---
 
 ========================================================================
-
 # Task-3 --- Automate the Pipeline with a GitHub Webhook
-
 ========================================================================
 
 A webhook can trigger Jenkins when code is pushed to GitHub, so you do

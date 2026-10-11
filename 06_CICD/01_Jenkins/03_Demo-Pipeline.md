@@ -271,7 +271,14 @@ pipeline {
     }
 
     stages {
-
+       stage("Test Agent") {
+            steps {
+                sh "hostname"
+                sh "whoami"
+                sh "docker --version"
+            }
+        }
+        
         stage("Hello") {
             steps {
                 sh '''

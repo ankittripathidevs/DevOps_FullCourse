@@ -187,3 +187,4 @@ Email Notification
 - `--output results.json` saves the scan report as a JSON file.
 - The scan stage runs before the Docker image build.
 - The pipeline shown saves the Trivy report but does not automatically fail the build when vulnerabilities are found.
+

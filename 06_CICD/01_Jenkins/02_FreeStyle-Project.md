@@ -804,12 +804,6 @@ Day-5
 Poll SCM
         ↓
 Day-6
-E-mail Notification
-        ↓
-Day-7
-Role-Based Access Control
-        ↓
-Day-8
 Global Environment Variables
 ```
 

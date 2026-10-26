@@ -46,7 +46,8 @@ Jenkins-Shared-Library/
     ├── trivy_scan.groovy
     ├── docker_build.groovy
     ├── docker_push.groovy
-    └── docker_compose.groovy
+    ├── docker_compose.groovy
+    └── email_notification.groovy
 ```
 
 ## 4. Create Reusable Functions
@@ -168,9 +169,35 @@ stage('Deploy') {
 }
 ```
 
-Docker and the Compose V2 plugin must be installed. If deployment should use the image pushed to Docker Hub, configure the Compose file to reference the intended image.
+Docker and the Compose V2 plugin must be installed. If deployment should use the image pushed to Docker Hub, configure the Compose file to reference the intended image and tag.
 
-## 5. Use the Shared Library in a Jenkinsfile
+### F. Email Notification — `vars/email_notification.groovy`
+
+This function sends email notifications after successful or failed pipeline execution and attaches the Trivy report when available.
+
+```groovy
+def call() {
+    emailext(
+        to: 'ankittripathi2k24@gmail.com',
+        subject: "${currentBuild.currentResult}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+            Build Status: ${currentBuild.currentResult}
+            Job: ${env.JOB_NAME}
+            Build Number: ${env.BUILD_NUMBER}
+            Build URL: ${env.BUILD_URL}
+        """,
+        attachmentsPattern: 'results.json'
+    )
+}
+```
+
+**Requirements:**
+
+- Install the **Email Extension Plugin**.
+- Configure SMTP under `Manage Jenkins → System`.
+- Ensure `results.json` exists in the workspace to attach the report.
+
+## 5. Complete Jenkinsfile
 
 Place `@Library` before the pipeline definition.
 
@@ -197,13 +224,13 @@ pipeline {
             }
         }
 
-        stage('Trivy Scan') {
+        stage('Trivy File System Scan') {
             steps {
                 trivy_scan()
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
                 docker_build('expenses-tracker-app', 'latest')
             }
@@ -223,6 +250,25 @@ pipeline {
             steps {
                 docker_compose()
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment pipeline completed successfully'
+            email_notification()
+        }
+
+        failure {
+            echo 'Deployment pipeline failed'
+            email_notification()
+        }
+
+        always {
+            archiveArtifacts(
+                artifacts: 'results.json',
+                allowEmptyArchive: true
+            )
         }
     }
 }
@@ -248,6 +294,8 @@ Push to Docker Hub
 Deploy with Docker Compose
         ↓
 Archive Trivy Report
+        ↓
+Send Success/Failure Email
 ```
 
 ## 7. Quick Revision
@@ -259,14 +307,18 @@ Archive Trivy Report
 | `docker_build.groovy` | Build image | `docker_build(name, tag)` |
 | `docker_push.groovy` | Push image | `docker_push(name, repo, tag)` |
 | `docker_compose.groovy` | Deploy application | `docker_compose()` |
+| `email_notification.groovy` | Send build email | `email_notification()` |
 
 ## Important Notes
 
-- Configure the library in Jenkins before using `@Library('Shared') _`.
+- Configure the Shared Library in Jenkins before using `@Library('Shared') _`.
 - Store reusable functions inside `vars/`.
-- Ensure the Jenkins agent has Git, Java, Trivy, Docker, and Docker Compose as required.
+- Ensure the Jenkins agent has the required tools: Git, Java, Trivy, Docker, and Docker Compose.
 - Store secrets in Jenkins Credentials.
-- Archive `results.json` to retain the scan report.
+- Archive `results.json` to retain the Trivy report.
 - Maven Central rate limits may affect dependency resolution.
+- The Trivy command shown does not enforce vulnerability severity thresholds.
 - Test individual functions before running the complete pipeline.
-- Use meaningful image tags instead of relying exclusively on `latest` for production deployments.
+- Use meaningful image tags for production deployments instead of relying exclusively on `latest`.
+- `docker compose up -d --build` may rebuild the application locally. To deploy the published image, configure Compose to use the correct registry image and tag.
+
